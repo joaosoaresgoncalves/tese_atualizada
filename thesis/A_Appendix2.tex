@@ -619,13 +619,6 @@ This appendix details the cross-model check of Section~\ref{sec:results:crossmod
 \label{fig:app:crossmodel:acc}
 \end{figure}
 
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\textwidth]{Figures/fig_mistral_confusion_buyer.png}
-\caption{Disposition confusion matrices on the 32 buyer cases under Mistral-Large-3, one panel per design.}
-\label{fig:app:crossmodel:conf}
-\end{figure}
-
 \begin{table}[htbp]
 \centering
 \caption{Error direction, reproducibility and per-run latency per design under Mistral-Large-3, buyer cohort (32 cases). Over-rejection routes a sound ASN to manual review; under-rejection lets a defective ASN through. Identical counts cases with the same disposition in all 3 replays.}
@@ -668,11 +661,11 @@ pre hoc       & yes & 0.69 & 24/41 & 2/9 \\
 \end{tabular}
 \end{table}
 
-Two findings carry over from the primary model. First, the LLM-as-judge design is again the weakest, lowest on both accuracy (0.49) and recall (16 of 41). It fails 8 of the 9 single rule PASS controls, the same over-harshness that collapses it on the primary model, so the collapse replicates across model families. The absolute spread is narrower, because the second model is a weaker fit for the task. Second, the enforcer bearing designs lead on accuracy, with in generation highest on this cohort (0.84). On specificity the picture is mixed: in generation and pre hoc fail only 2 of the 9 PASS controls, while post hoc fails 7, closer to the enforcer free designs. The per-design confusion matrices behind these numbers are shown in Figure~\ref{fig:app:crossmodel:syn:conf}, where under-rejections are more prominent than on the buyer cohort, as expected for a weaker model on the harder synthetic cases.
+Two findings carry over from the primary model. First, the LLM-as-judge design is again the weakest, lowest on both accuracy (0.49) and recall (16 of 41). It fails 8 of the 9 single rule PASS controls, the same over-harshness that collapses it on the primary model, so the collapse replicates across model families. The absolute spread is narrower, because the second model is a weaker fit for the task. Second, the enforcer bearing designs lead on accuracy, with in generation highest on this cohort (0.84). On specificity the picture is mixed: in generation and pre hoc fail only 2 of the 9 PASS controls, while post hoc fails 7, closer to the enforcer free designs. The per-design confusion matrices for both cohorts under this model are shown in Figure~\ref{fig:app:crossmodel:conf}; on the synthetic panels (bottom row) under-rejections become more prominent than on the buyer cohort (top row), as expected for a weaker model on the harder synthetic cases.
 
 \begin{figure}[htb]
 \centering
-\includegraphics[width=\textwidth]{Figures/fig_mistral_confusion_synthetic.png}
-\caption{Disposition confusion matrices on the 67 synthetic cases under Mistral-Large-3, one panel per design. Rows are the by-construction ground truth, columns the pipeline disposition.}
-\label{fig:app:crossmodel:syn:conf}
+\includegraphics[width=\textwidth]{Figures/fig_mistral_confusion.png}
+\caption{Per-design disposition confusion matrices under Mistral-Large-3: buyer cohort (top, n=32) and synthetic cohort (bottom, n=67). Rows are the ground truth, columns the pipeline disposition; above the diagonal is over-rejection, below is under-rejection.}
+\label{fig:app:crossmodel:conf}
 \end{figure}
