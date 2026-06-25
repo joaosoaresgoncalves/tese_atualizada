@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cXML payloadID="PAYLOAD_SYN_PO_0001" timestamp="2026-04-20T09:00:00+00:00" version="1.2.067">
+  <Header>
+    <From><Credential domain="NetworkID"><Identity>AN_BUYER_SYN</Identity></Credential></From>
+    <To><Credential domain="NetworkID"><Identity>AN_SYN_0001</Identity></Credential></To>
+    <Sender>
+      <Credential domain="NetworkID"><Identity>AN_BUYER_SYN</Identity></Credential>
+      <UserAgent>SyntheticSample</UserAgent>
+    </Sender>
+  </Header>
+  <Request>
+    <OrderRequest>
+      <OrderRequestHeader orderID="ORDER_SYN_0001" orderDate="2026-04-20T09:00:00+00:00" type="new" orderVersion="1">
+        <Total><Money currency="EUR">550.00</Money></Total>
+        <ShipTo>
+          <Address addressID="SHIPTO_SYN_0001">
+            <Name xml:lang="en">Buyer Warehouse</Name>
+            <PostalAddress>
+              <Street>1 Sample Street</Street>
+              <City>TOWN_B</City>
+              <PostalCode>0000</PostalCode>
+              <Country isoCountryCode="LI">Liechtenstein</Country>
+            </PostalAddress>
+          </Address>
+        </ShipTo>
+        <BillTo>
+          <Address addressID="BILLTO_SYN_0001">
+            <Name xml:lang="en">Buyer HQ</Name>
+            <PostalAddress>
+              <Street>1 Sample Street</Street>
+              <City>TOWN_B</City>
+              <PostalCode>0000</PostalCode>
+              <Country isoCountryCode="LI">Liechtenstein</Country>
+            </PostalAddress>
+          </Address>
+        </BillTo>
+        <Contact role="supplierCorporate" addressID="SUP_SYN_0001">
+          <Name xml:lang="en">Synthetic Supplier S1</Name>
+        </Contact>
+        <TransportTerms value="FCA"/>
+      </OrderRequestHeader>
+      <ItemOut quantity="100" lineNumber="10" requestedDeliveryDate="2026-05-02T00:00:00+00:00">
+        <ItemID>
+          <SupplierPartID>PART_SYN_A</SupplierPartID>
+          <BuyerPartID>BUY_PART_A</BuyerPartID>
+        </ItemID>
+        <ItemDetail>
+          <UnitPrice><Money currency="EUR">5.50</Money></UnitPrice>
+          <Description xml:lang="en">Synthetic sample item A</Description>
+          <UnitOfMeasure>H87</UnitOfMeasure>
+        </ItemDetail>
+      </ItemOut>
+    </OrderRequest>
+  </Request>
+</cXML>

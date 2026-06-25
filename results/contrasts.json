@@ -1,0 +1,15 @@
+{
+  "_comment": "Paired disposition contrasts against the pre hoc reference (Table G.7). P/O are discordant counts: P = cases only pre hoc gets right, O = cases only the other design gets right. Exact two-sided McNemar, Holm-corrected per sample; Cohen's h with band (0.2 small, 0.5 medium, 0.8 large). Backs Figure 5.3 (forest of effect sizes). Only the synthetic LLM-as-judge contrast clears the large band and survives Holm.",
+  "reference": "partition",
+  "bands": {"small": 0.2, "medium": 0.5, "large": 0.8},
+  "contrasts": [
+    {"sample": "synthetic", "other": "none",          "n": 67, "P": 6,  "O": 1, "acc_ref": 0.88, "acc_other": 0.81, "mcnemar_p": 0.125, "mcnemar_p_holm": 0.375,  "cohen_h": 0.21},
+    {"sample": "synthetic", "other": "llm",           "n": 67, "P": 27, "O": 2, "acc_ref": 0.88, "acc_other": 0.51, "mcnemar_p": 0.001, "mcnemar_p_holm": 0.001,  "cohen_h": 0.85},
+    {"sample": "synthetic", "other": "deterministic", "n": 67, "P": 2,  "O": 1, "acc_ref": 0.88, "acc_other": 0.87, "mcnemar_p": 1.000, "mcnemar_p_holm": 1.000,  "cohen_h": 0.04},
+    {"sample": "synthetic", "other": "tool_use",      "n": 67, "P": 4,  "O": 1, "acc_ref": 0.88, "acc_other": 0.84, "mcnemar_p": 0.375, "mcnemar_p_holm": 0.750,  "cohen_h": 0.13},
+    {"sample": "buyer",     "other": "none",          "n": 32, "P": 4,  "O": 2, "acc_ref": 0.88, "acc_other": 0.81, "mcnemar_p": 0.688, "mcnemar_p_holm": 1.000,  "cohen_h": 0.17},
+    {"sample": "buyer",     "other": "llm",           "n": 32, "P": 2,  "O": 0, "acc_ref": 0.88, "acc_other": 0.81, "mcnemar_p": 0.500, "mcnemar_p_holm": 1.000,  "cohen_h": 0.17},
+    {"sample": "buyer",     "other": "deterministic", "n": 32, "P": 0,  "O": 0, "acc_ref": 0.88, "acc_other": 0.88, "mcnemar_p": 1.000, "mcnemar_p_holm": 1.000,  "cohen_h": 0.00},
+    {"sample": "buyer",     "other": "tool_use",      "n": 32, "P": 0,  "O": 0, "acc_ref": 0.88, "acc_other": 0.88, "mcnemar_p": 1.000, "mcnemar_p_holm": 1.000,  "cohen_h": 0.00}
+  ]
+}

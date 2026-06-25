@@ -1,0 +1,12 @@
+{
+  "_comment": "Verdict reproducibility across the 5 repeated runs per design (Table G.8). 'identical' counts cases with the same disposition in all 5 runs; the buyer accuracy range and standard deviation are over the 5 per-run buyer accuracies. Backs the reproducibility panel of Figure 5.5. The pre hoc (partition) design is the only one identical in all runs on both cohorts.",
+  "synthetic_n": 67,
+  "buyer_n": 32,
+  "designs": {
+    "none":          {"synthetic_identical": 58, "buyer_identical": 28, "buyer_acc_range": [0.78, 0.84], "buyer_acc_std": 0.023},
+    "deterministic": {"synthetic_identical": 61, "buyer_identical": 27, "buyer_acc_range": [0.81, 0.94], "buyer_acc_std": 0.050},
+    "llm":           {"synthetic_identical": 43, "buyer_identical": 21, "buyer_acc_range": [0.72, 0.84], "buyer_acc_std": 0.044},
+    "tool_use":      {"synthetic_identical": 54, "buyer_identical": 27, "buyer_acc_range": [0.78, 0.88], "buyer_acc_std": 0.037},
+    "partition":     {"synthetic_identical": 66, "buyer_identical": 32, "buyer_acc_range": [0.88, 0.88], "buyer_acc_std": 0.000}
+  }
+}

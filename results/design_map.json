@@ -1,0 +1,9 @@
+{
+  "_comment": "Maps the internal pipeline mode key to the design name used in the dissertation, and whether the design carries the deterministic enforcer.",
+  "none":          {"design": "pure LLM",      "mode_label": "Mode A", "enforcer": false},
+  "deterministic": {"design": "post hoc",      "mode_label": "Mode B", "enforcer": true},
+  "llm":           {"design": "LLM-as-judge",  "mode_label": "Mode C", "enforcer": false},
+  "tool_use":      {"design": "in generation", "mode_label": "Mode D", "enforcer": true},
+  "partition":     {"design": "pre hoc",       "mode_label": "Mode E", "enforcer": true},
+  "order": ["none", "deterministic", "llm", "tool_use", "partition"]
+}

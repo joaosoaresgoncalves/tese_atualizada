@@ -1,0 +1,27 @@
+# Secrets — never commit a real .env
+.env
+*.env
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Regenerable outputs
+notebooks/figures/
+sample_data/generated/
+results/sweep_sample/
+
+# Spreadsheets, logs and any raw data (never publish)
+*.xlsx
+*.xls
+*.log
+data/
+"AI Files"/

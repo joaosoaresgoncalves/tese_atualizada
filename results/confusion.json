@@ -1,0 +1,18 @@
+{
+  "_comment": "Per-design disposition confusion matrices (Figure 5.6). Rows are the consensus ground truth, columns the pipeline disposition, in order [PASS, REVIEW, REJECT]. Above the diagonal is over-rejection, below is under-rejection. Buyer cohort n=32, synthetic cohort n=67.",
+  "labels": ["PASS", "REVIEW", "REJECT"],
+  "buyer": {
+    "none":          [[2, 2, 0], [0, 11, 4], [0, 0, 13]],
+    "deterministic": [[0, 4, 0], [0, 15, 0], [0, 0, 13]],
+    "llm":           [[0, 4, 0], [0, 13, 2], [0, 0, 13]],
+    "tool_use":      [[0, 4, 0], [0, 15, 0], [0, 0, 13]],
+    "partition":     [[0, 4, 0], [0, 15, 0], [0, 0, 13]]
+  },
+  "synthetic": {
+    "none":          [[7, 3, 0], [3, 14, 5], [1, 1, 33]],
+    "deterministic": [[6, 4, 0], [1, 20, 1], [0, 3, 32]],
+    "llm":           [[0, 1, 9], [0, 4, 18], [0, 5, 30]],
+    "tool_use":      [[6, 4, 0], [2, 19, 1], [1, 3, 31]],
+    "partition":     [[7, 3, 0], [1, 19, 2], [0, 2, 33]]
+  }
+}

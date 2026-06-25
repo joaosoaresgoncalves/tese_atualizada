@@ -1,0 +1,29 @@
+{
+  "_comment": "Operational spread per design on the 28 production evaluation cases (Table 5.3 / Appendix F of the dissertation). Latency in seconds. Cost in EUR per ASN (USD est. converted at the loaded rate used in the thesis). Used by Figures F.1 (latency box) and F.2 (cost-accuracy Pareto).",
+  "n_cases": 28,
+  "currency": "EUR",
+  "latency_seconds": {
+    "_fields": ["min", "q1", "median", "q3", "p90", "p95", "max", "std"],
+    "none":          [10.65, 11.88, 13.14, 15.74, 20.00, 32.30, 34.98, 5.70],
+    "deterministic": [10.58, 12.13, 13.94, 16.19, 21.77, 30.09, 36.22, 5.81],
+    "llm":           [12.04, 12.85, 13.67, 16.72, 23.24, 35.19, 38.33, 7.04],
+    "tool_use":      [9.10, 11.37, 13.22, 16.94, 23.22, 33.81, 48.47, 7.93],
+    "partition":     [7.05, 7.48, 7.89, 9.45, 10.11, 12.27, 15.38, 1.73]
+  },
+  "tokens": {
+    "_fields": ["prompt_mean", "completion_mean"],
+    "none":          [12615, 3723],
+    "deterministic": [12614, 3838],
+    "llm":           [15859, 3931],
+    "tool_use":      [26244, 3662],
+    "partition":     [9870, 1970]
+  },
+  "cost_eur": {
+    "_fields": ["mean", "p95", "max", "std"],
+    "none":          [0.109, 0.201, 0.500, 0.080],
+    "deterministic": [0.111, 0.203, 0.502, 0.081],
+    "llm":           [0.127, 0.247, 0.518, 0.086],
+    "tool_use":      [0.171, 0.351, 0.563, 0.100],
+    "partition":     [0.073, 0.111, 0.463, 0.075]
+  }
+}

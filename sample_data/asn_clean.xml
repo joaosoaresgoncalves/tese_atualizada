@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cXML payloadID="PAYLOAD_SYN_ASN_0001" timestamp="2026-04-29T08:00:00+00:00" version="1.2.067" xml:lang="en">
+  <Header>
+    <From>
+      <Credential domain="NetworkID"><Identity>AN_SYN_0001</Identity></Credential>
+      <Credential domain="VendorID"><Identity>VENDOR_SYN_01</Identity></Credential>
+    </From>
+    <To><Credential domain="NetworkID"><Identity>AN_BUYER_SYN</Identity></Credential></To>
+    <Sender>
+      <Credential domain="NetworkID"><Identity>AN_SYN_0001</Identity></Credential>
+      <UserAgent>SyntheticSample</UserAgent>
+    </Sender>
+  </Header>
+  <Request deploymentMode="production">
+    <ShipNoticeRequest>
+      <ShipNoticeHeader shipmentID="SHIP_SYN_0001" noticeDate="2026-04-29T08:00:00+00:00" shipmentDate="2026-04-29T08:00:00+00:00" deliveryDate="2026-05-02T00:00:00+00:00" operation="new">
+        <Contact role="shipFrom">
+          <Name xml:lang="en">Synthetic Supplier S1</Name>
+          <PostalAddress>
+            <Street>2 Supplier Road</Street>
+            <City>TOWN_A</City>
+            <PostalCode>1111</PostalCode>
+            <Country isoCountryCode="DE">Germany</Country>
+          </PostalAddress>
+        </Contact>
+        <Contact role="shipTo" addressID="SHIPTO_SYN_0001">
+          <Name xml:lang="en">Buyer Warehouse</Name>
+          <PostalAddress>
+            <Street>1 Sample Street</Street>
+            <City>TOWN_B</City>
+            <PostalCode>0000</PostalCode>
+            <Country isoCountryCode="LI">Liechtenstein</Country>
+          </PostalAddress>
+        </Contact>
+        <TransportTerms value="FCA"/>
+        <Packaging>
+          <Dimension type="netWeight" quantity="10.0"><UnitOfMeasure>KGM</UnitOfMeasure></Dimension>
+          <Dimension type="grossWeight" quantity="12.5"><UnitOfMeasure>KGM</UnitOfMeasure></Dimension>
+        </Packaging>
+      </ShipNoticeHeader>
+      <ShipNoticePortion>
+        <OrderReference orderID="ORDER_SYN_0001">
+          <DocumentReference payloadID="PAYLOAD_SYN_PO_0001"/>
+        </OrderReference>
+        <ShipNoticeItem lineNumber="10" quantity="100">
+          <UnitOfMeasure>H87</UnitOfMeasure>
+          <ShipNoticeItemDetail>
+            <UnitPrice><Money currency="EUR">5.50</Money></UnitPrice>
+          </ShipNoticeItemDetail>
+          <ItemID><SupplierPartID>PART_SYN_A</SupplierPartID></ItemID>
+        </ShipNoticeItem>
+      </ShipNoticePortion>
+    </ShipNoticeRequest>
+  </Request>
+</cXML>

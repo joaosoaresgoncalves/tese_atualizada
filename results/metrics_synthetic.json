@@ -1,0 +1,2230 @@
+{
+  "none": {
+    "raw": {
+      "metrics": {
+        "kappa_unweighted": 0.6716924236713155,
+        "kappa_linear": 0.7255705090696314,
+        "kappa_quadratic": 0.7833468067906224,
+        "gwet_ac2_linear": 0.7946210268948654,
+        "f1_weighted": 0.8016492878075377,
+        "accuracy": 0.8059701492537313
+      },
+      "cis": {
+        "kappa_unweighted": [
+          0.5086281276962898,
+          0.8154269972451791
+        ],
+        "kappa_linear": [
+          0.5756509500351865,
+          0.8516057585825028
+        ],
+        "kappa_quadratic": [
+          0.6325411334552102,
+          0.8958472129691317
+        ],
+        "gwet_ac2_linear": [
+          0.6759763027445291,
+          0.896707411078075
+        ],
+        "f1_weighted": [
+          0.6969985238641956,
+          0.8934720337705413
+        ],
+        "accuracy": [
+          0.7014925373134329,
+          0.8955223880597015
+        ]
+      },
+      "n": 67
+    },
+    "r18_filtered": {
+      "metrics": {
+        "kappa_unweighted": 0.6716924236713155,
+        "kappa_linear": 0.7255705090696314,
+        "kappa_quadratic": 0.7833468067906224,
+        "gwet_ac2_linear": 0.7946210268948654,
+        "f1_weighted": 0.8016492878075377,
+        "accuracy": 0.8059701492537313
+      },
+      "cis": {
+        "kappa_unweighted": [
+          0.5086281276962898,
+          0.8154269972451791
+        ],
+        "kappa_linear": [
+          0.5756509500351865,
+          0.8516057585825028
+        ],
+        "kappa_quadratic": [
+          0.6325411334552102,
+          0.8958472129691317
+        ],
+        "gwet_ac2_linear": [
+          0.6759763027445291,
+          0.896707411078075
+        ],
+        "f1_weighted": [
+          0.6969985238641956,
+          0.8934720337705413
+        ],
+        "accuracy": [
+          0.7014925373134329,
+          0.8955223880597015
+        ]
+      },
+      "n": 67
+    },
+    "n_total": 67,
+    "n_single": 50,
+    "n_multi": 17,
+    "n_filtered": 67,
+    "rule_recall": {
+      "recall": 0.7073170731707317,
+      "ci": [
+        0.5609756097560976,
+        0.8536585365853658
+      ],
+      "caught": 29,
+      "total": 41,
+      "n_eligible": 41
+    },
+    "rule_recall_filtered": {
+      "recall": 0.7073170731707317,
+      "ci": [
+        0.5609756097560976,
+        0.8536585365853658
+      ],
+      "caught": 29,
+      "total": 41,
+      "n_eligible": 41
+    },
+    "multirule": {
+      "n": 17,
+      "disposition_match": 16,
+      "disposition_accuracy": 0.9411764705882353,
+      "rule_coverage_caught": 31,
+      "rule_coverage_expected": 38,
+      "rule_coverage": 0.8157894736842105,
+      "per_case": [
+        {
+          "case_id": "SYN-M01",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R01",
+            "R08",
+            "R21"
+          ],
+          "rules_caught": [
+            "R01",
+            "R08"
+          ],
+          "rules_missed": [
+            "R21"
+          ],
+          "rules_extra": [
+            "R15"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M02",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R09",
+            "R03",
+            "R05"
+          ],
+          "rules_caught": [
+            "R03",
+            "R05"
+          ],
+          "rules_missed": [
+            "R09"
+          ],
+          "rules_extra": [
+            "R04"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M03",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R02",
+            "R07"
+          ],
+          "rules_caught": [
+            "R02",
+            "R07"
+          ],
+          "rules_missed": [],
+          "rules_extra": [
+            "R06",
+            "R15"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M04",
+          "expected_disposition": "REVIEW",
+          "predicted_disposition": "REVIEW",
+          "disposition_match": true,
+          "expected_rules": [
+            "R13",
+            "R16"
+          ],
+          "rules_caught": [
+            "R13",
+            "R16"
+          ],
+          "rules_missed": [],
+          "rules_extra": [],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M05",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R19",
+            "R21",
+            "R15"
+          ],
+          "rules_caught": [
+            "R19",
+            "R21"
+          ],
+          "rules_missed": [
+            "R15"
+          ],
+          "rules_extra": [
+            "R20"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M06",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R01",
+            "R15"
+          ],
+          "rules_caught": [
+            "R01",
+            "R15"
+          ],
+          "rules_missed": [],
+          "rules_extra": [
+            "R16"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M07",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R01",
+            "R08"
+          ],
+          "rules_caught": [
+            "R01",
+            "R08"
+          ],
+          "rules_missed": [],
+          "rules_extra": [
+            "R15"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M08",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R07",
+            "R13"
+          ],
+          "rules_caught": [
+            "R07",
+            "R13"
+          ],
+          "rules_missed": [],
+          "rules_extra": [
+            "R06"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M09",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R01",
+            "R02",
+            "R15"
+          ],
+          "rules_caught": [
+            "R01",
+            "R02",
+            "R15"
+          ],
+          "rules_missed": [],
+          "rules_extra": [
+            "R16"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M10",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R16",
+            "R21"
+          ],
+          "rules_caught": [
+            "R16",
+            "R21"
+          ],
+          "rules_missed": [],
+          "rules_extra": [
+            "R01",
+            "R03",
+            "R04"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M11",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R08",
+            "R13"
+          ],
+          "rules_caught": [
+            "R08",
+            "R13"
+          ],
+          "rules_missed": [],
+          "rules_extra": [],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M12",
+          "expected_disposition": "REVIEW",
+          "predicted_disposition": "REVIEW",
+          "disposition_match": true,
+          "expected_rules": [
+            "R03",
+            "R13"
+          ],
+          "rules_caught": [
+            "R03",
+            "R13"
+          ],
+          "rules_missed": [],
+          "rules_extra": [],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M13",
+          "expected_disposition": "PASS",
+          "predicted_disposition": "REVIEW",
+          "disposition_match": false,
+          "expected_rules": [],
+          "rules_caught": [],
+          "rules_missed": [],
+          "rules_extra": [
+            "R04",
+            "R16",
+            "R22"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M14",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R16",
+            "R05"
+          ],
+          "rules_caught": [
+            "R05"
+          ],
+          "rules_missed": [
+            "R16"
+          ],
+          "rules_extra": [
+            "R01",
+            "R15"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M15",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R19",
+            "R21",
+            "R08"
+          ],
+          "rules_caught": [
+            "R08"
+          ],
+          "rules_missed": [
+            "R19",
+            "R21"
+          ],
+          "rules_extra": [],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M16",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R09",
+            "R02"
+          ],
+          "rules_caught": [
+            "R02"
+          ],
+          "rules_missed": [
+            "R09"
+          ],
+          "rules_extra": [
+            "R15"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M17",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R01",
+            "R03",
+            "R13"
+          ],
+          "rules_caught": [
+            "R01",
+            "R03",
+            "R13"
+          ],
+          "rules_missed": [],
+          "rules_extra": [
+            "R15",
+            "R16"
+          ],
+          "r18_extra": false
+        }
+      ]
+    }
+  },
+  "deterministic": {
+    "raw": {
+      "metrics": {
+        "kappa_unweighted": 0.7741573033707865,
+        "kappa_linear": 0.814175654853621,
+        "kappa_quadratic": 0.8627986348122867,
+        "gwet_ac2_linear": 0.8672926677181526,
+        "f1_weighted": 0.8650624428876028,
+        "accuracy": 0.8656716417910447
+      },
+      "cis": {
+        "kappa_unweighted": [
+          0.6340131099781501,
+          0.8926712054465359
+        ],
+        "kappa_linear": [
+          0.6993268511593118,
+          0.9101274312541918
+        ],
+        "kappa_quadratic": [
+          0.7661059980958426,
+          0.9357622243528284
+        ],
+        "gwet_ac2_linear": [
+          0.7811223894528059,
+          0.9425057208237987
+        ],
+        "f1_weighted": [
+          0.7778731343283581,
+          0.9401279317697228
+        ],
+        "accuracy": [
+          0.7761194029850746,
+          0.9402985074626866
+        ]
+      },
+      "n": 67
+    },
+    "r18_filtered": {
+      "metrics": {
+        "kappa_unweighted": 0.7741573033707865,
+        "kappa_linear": 0.814175654853621,
+        "kappa_quadratic": 0.8627986348122867,
+        "gwet_ac2_linear": 0.8672926677181526,
+        "f1_weighted": 0.8650624428876028,
+        "accuracy": 0.8656716417910447
+      },
+      "cis": {
+        "kappa_unweighted": [
+          0.6340131099781501,
+          0.8926712054465359
+        ],
+        "kappa_linear": [
+          0.6993268511593118,
+          0.9101274312541918
+        ],
+        "kappa_quadratic": [
+          0.7661059980958426,
+          0.9357622243528284
+        ],
+        "gwet_ac2_linear": [
+          0.7811223894528059,
+          0.9425057208237987
+        ],
+        "f1_weighted": [
+          0.7778731343283581,
+          0.9401279317697228
+        ],
+        "accuracy": [
+          0.7761194029850746,
+          0.9402985074626866
+        ]
+      },
+      "n": 67
+    },
+    "n_total": 67,
+    "n_single": 50,
+    "n_multi": 17,
+    "n_filtered": 67,
+    "rule_recall": {
+      "recall": 0.9024390243902439,
+      "ci": [
+        0.8048780487804879,
+        0.975609756097561
+      ],
+      "caught": 37,
+      "total": 41,
+      "n_eligible": 41
+    },
+    "rule_recall_filtered": {
+      "recall": 0.9024390243902439,
+      "ci": [
+        0.8048780487804879,
+        0.975609756097561
+      ],
+      "caught": 37,
+      "total": 41,
+      "n_eligible": 41
+    },
+    "multirule": {
+      "n": 17,
+      "disposition_match": 15,
+      "disposition_accuracy": 0.8823529411764706,
+      "rule_coverage_caught": 34,
+      "rule_coverage_expected": 38,
+      "rule_coverage": 0.8947368421052632,
+      "per_case": [
+        {
+          "case_id": "SYN-M01",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R01",
+            "R08",
+            "R21"
+          ],
+          "rules_caught": [
+            "R01",
+            "R08",
+            "R21"
+          ],
+          "rules_missed": [],
+          "rules_extra": [
+            "R15",
+            "R16",
+            "R22"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M02",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R09",
+            "R03",
+            "R05"
+          ],
+          "rules_caught": [
+            "R03",
+            "R05"
+          ],
+          "rules_missed": [
+            "R09"
+          ],
+          "rules_extra": [
+            "R04"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M03",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R02",
+            "R07"
+          ],
+          "rules_caught": [
+            "R02",
+            "R07"
+          ],
+          "rules_missed": [],
+          "rules_extra": [
+            "R15"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M04",
+          "expected_disposition": "REVIEW",
+          "predicted_disposition": "REVIEW",
+          "disposition_match": true,
+          "expected_rules": [
+            "R13",
+            "R16"
+          ],
+          "rules_caught": [
+            "R13"
+          ],
+          "rules_missed": [
+            "R16"
+          ],
+          "rules_extra": [
+            "R15"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M05",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R19",
+            "R21",
+            "R15"
+          ],
+          "rules_caught": [
+            "R19",
+            "R21"
+          ],
+          "rules_missed": [
+            "R15"
+          ],
+          "rules_extra": [],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M06",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R01",
+            "R15"
+          ],
+          "rules_caught": [
+            "R01",
+            "R15"
+          ],
+          "rules_missed": [],
+          "rules_extra": [
+            "R16"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M07",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R01",
+            "R08"
+          ],
+          "rules_caught": [
+            "R01",
+            "R08"
+          ],
+          "rules_missed": [],
+          "rules_extra": [
+            "R15",
+            "R22"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M08",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R07",
+            "R13"
+          ],
+          "rules_caught": [
+            "R07",
+            "R13"
+          ],
+          "rules_missed": [],
+          "rules_extra": [],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M09",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R01",
+            "R02",
+            "R15"
+          ],
+          "rules_caught": [
+            "R01",
+            "R02",
+            "R15"
+          ],
+          "rules_missed": [],
+          "rules_extra": [
+            "R16",
+            "R22"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M10",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REVIEW",
+          "disposition_match": false,
+          "expected_rules": [
+            "R16",
+            "R21"
+          ],
+          "rules_caught": [
+            "R16",
+            "R21"
+          ],
+          "rules_missed": [],
+          "rules_extra": [
+            "R04",
+            "R15"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M11",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R08",
+            "R13"
+          ],
+          "rules_caught": [
+            "R08",
+            "R13"
+          ],
+          "rules_missed": [],
+          "rules_extra": [],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M12",
+          "expected_disposition": "REVIEW",
+          "predicted_disposition": "REVIEW",
+          "disposition_match": true,
+          "expected_rules": [
+            "R03",
+            "R13"
+          ],
+          "rules_caught": [
+            "R03",
+            "R13"
+          ],
+          "rules_missed": [],
+          "rules_extra": [],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M13",
+          "expected_disposition": "PASS",
+          "predicted_disposition": "REVIEW",
+          "disposition_match": false,
+          "expected_rules": [],
+          "rules_caught": [],
+          "rules_missed": [],
+          "rules_extra": [
+            "R04",
+            "R15",
+            "R16"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M14",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R16",
+            "R05"
+          ],
+          "rules_caught": [
+            "R16",
+            "R05"
+          ],
+          "rules_missed": [],
+          "rules_extra": [
+            "R15"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M15",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R19",
+            "R21",
+            "R08"
+          ],
+          "rules_caught": [
+            "R19",
+            "R21",
+            "R08"
+          ],
+          "rules_missed": [],
+          "rules_extra": [
+            "R20"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M16",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R09",
+            "R02"
+          ],
+          "rules_caught": [
+            "R02"
+          ],
+          "rules_missed": [
+            "R09"
+          ],
+          "rules_extra": [
+            "R15"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M17",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R01",
+            "R03",
+            "R13"
+          ],
+          "rules_caught": [
+            "R01",
+            "R03",
+            "R13"
+          ],
+          "rules_missed": [],
+          "rules_extra": [
+            "R15",
+            "R16"
+          ],
+          "r18_extra": false
+        }
+      ]
+    }
+  },
+  "llm": {
+    "raw": {
+      "metrics": {
+        "kappa_unweighted": 0.02770448548812654,
+        "kappa_linear": 0.010548523206750815,
+        "kappa_quadratic": -0.009036144578313365,
+        "gwet_ac2_linear": 0.48755614908340417,
+        "f1_weighted": 0.4227774172615185,
+        "accuracy": 0.5074626865671642
+      },
+      "cis": {
+        "kappa_unweighted": [
+          -0.12425089892129448,
+          0.18787878787878798
+        ],
+        "kappa_linear": [
+          -0.11759799833194329,
+          0.14936519790888714
+        ],
+        "kappa_quadratic": [
+          -0.12329120453959264,
+          0.13371176285083575
+        ],
+        "gwet_ac2_linear": [
+          0.29550639817478425,
+          0.6485914897216818
+        ],
+        "f1_weighted": [
+          0.28335246842709527,
+          0.5654340542187024
+        ],
+        "accuracy": [
+          0.373134328358209,
+          0.6417910447761194
+        ]
+      },
+      "n": 67
+    },
+    "r18_filtered": {
+      "metrics": {
+        "kappa_unweighted": 0.02770448548812654,
+        "kappa_linear": 0.010548523206750815,
+        "kappa_quadratic": -0.009036144578313365,
+        "gwet_ac2_linear": 0.48755614908340417,
+        "f1_weighted": 0.4227774172615185,
+        "accuracy": 0.5074626865671642
+      },
+      "cis": {
+        "kappa_unweighted": [
+          -0.12425089892129448,
+          0.18787878787878798
+        ],
+        "kappa_linear": [
+          -0.11759799833194329,
+          0.14936519790888714
+        ],
+        "kappa_quadratic": [
+          -0.12329120453959264,
+          0.13371176285083575
+        ],
+        "gwet_ac2_linear": [
+          0.29550639817478425,
+          0.6485914897216818
+        ],
+        "f1_weighted": [
+          0.28335246842709527,
+          0.5654340542187024
+        ],
+        "accuracy": [
+          0.373134328358209,
+          0.6417910447761194
+        ]
+      },
+      "n": 67
+    },
+    "n_total": 67,
+    "n_single": 50,
+    "n_multi": 17,
+    "n_filtered": 67,
+    "rule_recall": {
+      "recall": 0.6341463414634146,
+      "ci": [
+        0.4878048780487805,
+        0.7804878048780488
+      ],
+      "caught": 26,
+      "total": 41,
+      "n_eligible": 41
+    },
+    "rule_recall_filtered": {
+      "recall": 0.6341463414634146,
+      "ci": [
+        0.4878048780487805,
+        0.7804878048780488
+      ],
+      "caught": 26,
+      "total": 41,
+      "n_eligible": 41
+    },
+    "multirule": {
+      "n": 17,
+      "disposition_match": 13,
+      "disposition_accuracy": 0.7647058823529411,
+      "rule_coverage_caught": 27,
+      "rule_coverage_expected": 38,
+      "rule_coverage": 0.7105263157894737,
+      "per_case": [
+        {
+          "case_id": "SYN-M01",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R01",
+            "R08",
+            "R21"
+          ],
+          "rules_caught": [
+            "R01"
+          ],
+          "rules_missed": [
+            "R08",
+            "R21"
+          ],
+          "rules_extra": [
+            "R15",
+            "R16"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M02",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REVIEW",
+          "disposition_match": false,
+          "expected_rules": [
+            "R09",
+            "R03",
+            "R05"
+          ],
+          "rules_caught": [
+            "R03"
+          ],
+          "rules_missed": [
+            "R09",
+            "R05"
+          ],
+          "rules_extra": [
+            "R04"
+          ],
+          "r18_extra": true
+        },
+        {
+          "case_id": "SYN-M03",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R02",
+            "R07"
+          ],
+          "rules_caught": [
+            "R02",
+            "R07"
+          ],
+          "rules_missed": [],
+          "rules_extra": [
+            "R05",
+            "R06",
+            "R12",
+            "R15"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M04",
+          "expected_disposition": "REVIEW",
+          "predicted_disposition": "REJECT",
+          "disposition_match": false,
+          "expected_rules": [
+            "R13",
+            "R16"
+          ],
+          "rules_caught": [
+            "R13"
+          ],
+          "rules_missed": [
+            "R16"
+          ],
+          "rules_extra": [
+            "R05"
+          ],
+          "r18_extra": true
+        },
+        {
+          "case_id": "SYN-M05",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R19",
+            "R21",
+            "R15"
+          ],
+          "rules_caught": [
+            "R19",
+            "R21"
+          ],
+          "rules_missed": [
+            "R15"
+          ],
+          "rules_extra": [
+            "R05",
+            "R20"
+          ],
+          "r18_extra": true
+        },
+        {
+          "case_id": "SYN-M06",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R01",
+            "R15"
+          ],
+          "rules_caught": [
+            "R01",
+            "R15"
+          ],
+          "rules_missed": [],
+          "rules_extra": [
+            "R05",
+            "R16"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M07",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R01",
+            "R08"
+          ],
+          "rules_caught": [
+            "R01"
+          ],
+          "rules_missed": [
+            "R08"
+          ],
+          "rules_extra": [
+            "R05",
+            "R15"
+          ],
+          "r18_extra": true
+        },
+        {
+          "case_id": "SYN-M08",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R07",
+            "R13"
+          ],
+          "rules_caught": [
+            "R07",
+            "R13"
+          ],
+          "rules_missed": [],
+          "rules_extra": [
+            "R05",
+            "R06",
+            "R12",
+            "R15",
+            "R16",
+            "R22"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M09",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R01",
+            "R02",
+            "R15"
+          ],
+          "rules_caught": [
+            "R01",
+            "R02",
+            "R15"
+          ],
+          "rules_missed": [],
+          "rules_extra": [
+            "R05",
+            "R12",
+            "R16"
+          ],
+          "r18_extra": true
+        },
+        {
+          "case_id": "SYN-M10",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R16",
+            "R21"
+          ],
+          "rules_caught": [
+            "R21"
+          ],
+          "rules_missed": [
+            "R16"
+          ],
+          "rules_extra": [
+            "R01",
+            "R04",
+            "R20"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M11",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R08",
+            "R13"
+          ],
+          "rules_caught": [
+            "R08",
+            "R13"
+          ],
+          "rules_missed": [],
+          "rules_extra": [
+            "R05",
+            "R12"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M12",
+          "expected_disposition": "REVIEW",
+          "predicted_disposition": "REJECT",
+          "disposition_match": false,
+          "expected_rules": [
+            "R03",
+            "R13"
+          ],
+          "rules_caught": [
+            "R03"
+          ],
+          "rules_missed": [
+            "R13"
+          ],
+          "rules_extra": [
+            "R05",
+            "R20",
+            "R21",
+            "R22"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M13",
+          "expected_disposition": "PASS",
+          "predicted_disposition": "REVIEW",
+          "disposition_match": false,
+          "expected_rules": [],
+          "rules_caught": [],
+          "rules_missed": [],
+          "rules_extra": [],
+          "r18_extra": true
+        },
+        {
+          "case_id": "SYN-M14",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R16",
+            "R05"
+          ],
+          "rules_caught": [
+            "R16"
+          ],
+          "rules_missed": [
+            "R05"
+          ],
+          "rules_extra": [
+            "R01",
+            "R15"
+          ],
+          "r18_extra": true
+        },
+        {
+          "case_id": "SYN-M15",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R19",
+            "R21",
+            "R08"
+          ],
+          "rules_caught": [
+            "R19",
+            "R21",
+            "R08"
+          ],
+          "rules_missed": [],
+          "rules_extra": [],
+          "r18_extra": true
+        },
+        {
+          "case_id": "SYN-M16",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R09",
+            "R02"
+          ],
+          "rules_caught": [
+            "R02"
+          ],
+          "rules_missed": [
+            "R09"
+          ],
+          "rules_extra": [
+            "R05",
+            "R13",
+            "R14",
+            "R15"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M17",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R01",
+            "R03",
+            "R13"
+          ],
+          "rules_caught": [
+            "R01",
+            "R03",
+            "R13"
+          ],
+          "rules_missed": [],
+          "rules_extra": [
+            "R05",
+            "R12",
+            "R15",
+            "R16"
+          ],
+          "r18_extra": false
+        }
+      ]
+    }
+  },
+  "tool_use": {
+    "raw": {
+      "metrics": {
+        "kappa_unweighted": 0.7277428888067972,
+        "kappa_linear": 0.7594254937163376,
+        "kappa_quadratic": 0.7966175195143105,
+        "gwet_ac2_linear": 0.8204221419796746,
+        "f1_weighted": 0.8376196394304987,
+        "accuracy": 0.835820895522388
+      },
+      "cis": {
+        "kappa_unweighted": [
+          0.5797047970479704,
+          0.8514412416851441
+        ],
+        "kappa_linear": [
+          0.6199659671015314,
+          0.8739811912225706
+        ],
+        "kappa_quadratic": [
+          0.6465712132629993,
+          0.9052780395852968
+        ],
+        "gwet_ac2_linear": [
+          0.7078806816117429,
+          0.9152732893072923
+        ],
+        "f1_weighted": [
+          0.7475891195930282,
+          0.9131130063965884
+        ],
+        "accuracy": [
+          0.746268656716418,
+          0.9104477611940298
+        ]
+      },
+      "n": 67
+    },
+    "r18_filtered": {
+      "metrics": {
+        "kappa_unweighted": 0.7277428888067972,
+        "kappa_linear": 0.7594254937163376,
+        "kappa_quadratic": 0.7966175195143105,
+        "gwet_ac2_linear": 0.8204221419796746,
+        "f1_weighted": 0.8376196394304987,
+        "accuracy": 0.835820895522388
+      },
+      "cis": {
+        "kappa_unweighted": [
+          0.5797047970479704,
+          0.8514412416851441
+        ],
+        "kappa_linear": [
+          0.6199659671015314,
+          0.8739811912225706
+        ],
+        "kappa_quadratic": [
+          0.6465712132629993,
+          0.9052780395852968
+        ],
+        "gwet_ac2_linear": [
+          0.7078806816117429,
+          0.9152732893072923
+        ],
+        "f1_weighted": [
+          0.7475891195930282,
+          0.9131130063965884
+        ],
+        "accuracy": [
+          0.746268656716418,
+          0.9104477611940298
+        ]
+      },
+      "n": 67
+    },
+    "n_total": 67,
+    "n_single": 50,
+    "n_multi": 17,
+    "n_filtered": 67,
+    "rule_recall": {
+      "recall": 0.6829268292682927,
+      "ci": [
+        0.5365853658536586,
+        0.8292682926829268
+      ],
+      "caught": 28,
+      "total": 41,
+      "n_eligible": 41
+    },
+    "rule_recall_filtered": {
+      "recall": 0.6829268292682927,
+      "ci": [
+        0.5365853658536586,
+        0.8292682926829268
+      ],
+      "caught": 28,
+      "total": 41,
+      "n_eligible": 41
+    },
+    "multirule": {
+      "n": 17,
+      "disposition_match": 15,
+      "disposition_accuracy": 0.8823529411764706,
+      "rule_coverage_caught": 28,
+      "rule_coverage_expected": 38,
+      "rule_coverage": 0.7368421052631579,
+      "per_case": [
+        {
+          "case_id": "SYN-M01",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R01",
+            "R08",
+            "R21"
+          ],
+          "rules_caught": [
+            "R01",
+            "R08"
+          ],
+          "rules_missed": [
+            "R21"
+          ],
+          "rules_extra": [
+            "R16"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M02",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R09",
+            "R03",
+            "R05"
+          ],
+          "rules_caught": [
+            "R03",
+            "R05"
+          ],
+          "rules_missed": [
+            "R09"
+          ],
+          "rules_extra": [],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M03",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R02",
+            "R07"
+          ],
+          "rules_caught": [
+            "R02",
+            "R07"
+          ],
+          "rules_missed": [],
+          "rules_extra": [],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M04",
+          "expected_disposition": "REVIEW",
+          "predicted_disposition": "REVIEW",
+          "disposition_match": true,
+          "expected_rules": [
+            "R13",
+            "R16"
+          ],
+          "rules_caught": [
+            "R13"
+          ],
+          "rules_missed": [
+            "R16"
+          ],
+          "rules_extra": [],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M05",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R19",
+            "R21",
+            "R15"
+          ],
+          "rules_caught": [
+            "R19"
+          ],
+          "rules_missed": [
+            "R21",
+            "R15"
+          ],
+          "rules_extra": [],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M06",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R01",
+            "R15"
+          ],
+          "rules_caught": [
+            "R01"
+          ],
+          "rules_missed": [
+            "R15"
+          ],
+          "rules_extra": [
+            "R16"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M07",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R01",
+            "R08"
+          ],
+          "rules_caught": [
+            "R01",
+            "R08"
+          ],
+          "rules_missed": [],
+          "rules_extra": [
+            "R16"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M08",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R07",
+            "R13"
+          ],
+          "rules_caught": [
+            "R07",
+            "R13"
+          ],
+          "rules_missed": [],
+          "rules_extra": [],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M09",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R01",
+            "R02",
+            "R15"
+          ],
+          "rules_caught": [
+            "R01",
+            "R02"
+          ],
+          "rules_missed": [
+            "R15"
+          ],
+          "rules_extra": [
+            "R16"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M10",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REVIEW",
+          "disposition_match": false,
+          "expected_rules": [
+            "R16",
+            "R21"
+          ],
+          "rules_caught": [
+            "R16"
+          ],
+          "rules_missed": [
+            "R21"
+          ],
+          "rules_extra": [
+            "R04"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M11",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R08",
+            "R13"
+          ],
+          "rules_caught": [
+            "R08",
+            "R13"
+          ],
+          "rules_missed": [],
+          "rules_extra": [],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M12",
+          "expected_disposition": "REVIEW",
+          "predicted_disposition": "REVIEW",
+          "disposition_match": true,
+          "expected_rules": [
+            "R03",
+            "R13"
+          ],
+          "rules_caught": [
+            "R03",
+            "R13"
+          ],
+          "rules_missed": [],
+          "rules_extra": [],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M13",
+          "expected_disposition": "PASS",
+          "predicted_disposition": "REVIEW",
+          "disposition_match": false,
+          "expected_rules": [],
+          "rules_caught": [],
+          "rules_missed": [],
+          "rules_extra": [
+            "R16"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M14",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R16",
+            "R05"
+          ],
+          "rules_caught": [
+            "R16",
+            "R05"
+          ],
+          "rules_missed": [],
+          "rules_extra": [],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M15",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R19",
+            "R21",
+            "R08"
+          ],
+          "rules_caught": [
+            "R19",
+            "R08"
+          ],
+          "rules_missed": [
+            "R21"
+          ],
+          "rules_extra": [],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M16",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R09",
+            "R02"
+          ],
+          "rules_caught": [
+            "R02"
+          ],
+          "rules_missed": [
+            "R09"
+          ],
+          "rules_extra": [],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M17",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R01",
+            "R03",
+            "R13"
+          ],
+          "rules_caught": [
+            "R01",
+            "R03",
+            "R13"
+          ],
+          "rules_missed": [],
+          "rules_extra": [
+            "R16"
+          ],
+          "r18_extra": false
+        }
+      ]
+    }
+  },
+  "partition": {
+    "raw": {
+      "metrics": {
+        "kappa_unweighted": 0.7981927710843373,
+        "kappa_linear": 0.8368837492391966,
+        "kappa_quadratic": 0.8820941487021557,
+        "gwet_ac2_linear": 0.8823185011709601,
+        "f1_weighted": 0.8798759824068065,
+        "accuracy": 0.8805970149253731
+      },
+      "cis": {
+        "kappa_unweighted": [
+          0.6571136131013307,
+          0.9109831709477414
+        ],
+        "kappa_linear": [
+          0.7191616766467066,
+          0.9272134709397066
+        ],
+        "kappa_quadratic": [
+          0.7887767969735183,
+          0.9493192133131618
+        ],
+        "gwet_ac2_linear": [
+          0.7994088972479177,
+          0.95451288047373
+        ],
+        "f1_weighted": [
+          0.7944871974114199,
+          0.9546207516101833
+        ],
+        "accuracy": [
+          0.7910447761194029,
+          0.9552238805970149
+        ]
+      },
+      "n": 67
+    },
+    "r18_filtered": {
+      "metrics": {
+        "kappa_unweighted": 0.7981927710843373,
+        "kappa_linear": 0.8368837492391966,
+        "kappa_quadratic": 0.8820941487021557,
+        "gwet_ac2_linear": 0.8823185011709601,
+        "f1_weighted": 0.8798759824068065,
+        "accuracy": 0.8805970149253731
+      },
+      "cis": {
+        "kappa_unweighted": [
+          0.6571136131013307,
+          0.9109831709477414
+        ],
+        "kappa_linear": [
+          0.7191616766467066,
+          0.9272134709397066
+        ],
+        "kappa_quadratic": [
+          0.7887767969735183,
+          0.9493192133131618
+        ],
+        "gwet_ac2_linear": [
+          0.7994088972479177,
+          0.95451288047373
+        ],
+        "f1_weighted": [
+          0.7944871974114199,
+          0.9546207516101833
+        ],
+        "accuracy": [
+          0.7910447761194029,
+          0.9552238805970149
+        ]
+      },
+      "n": 67
+    },
+    "n_total": 67,
+    "n_single": 50,
+    "n_multi": 17,
+    "n_filtered": 67,
+    "rule_recall": {
+      "recall": 0.975609756097561,
+      "ci": [
+        0.926829268292683,
+        1.0
+      ],
+      "caught": 40,
+      "total": 41,
+      "n_eligible": 41
+    },
+    "rule_recall_filtered": {
+      "recall": 0.975609756097561,
+      "ci": [
+        0.926829268292683,
+        1.0
+      ],
+      "caught": 40,
+      "total": 41,
+      "n_eligible": 41
+    },
+    "multirule": {
+      "n": 17,
+      "disposition_match": 15,
+      "disposition_accuracy": 0.8823529411764706,
+      "rule_coverage_caught": 34,
+      "rule_coverage_expected": 38,
+      "rule_coverage": 0.8947368421052632,
+      "per_case": [
+        {
+          "case_id": "SYN-M01",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R01",
+            "R08",
+            "R21"
+          ],
+          "rules_caught": [
+            "R01",
+            "R08",
+            "R21"
+          ],
+          "rules_missed": [],
+          "rules_extra": [
+            "R15",
+            "R22"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M02",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R09",
+            "R03",
+            "R05"
+          ],
+          "rules_caught": [
+            "R03",
+            "R05"
+          ],
+          "rules_missed": [
+            "R09"
+          ],
+          "rules_extra": [
+            "R04"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M03",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R02",
+            "R07"
+          ],
+          "rules_caught": [
+            "R02",
+            "R07"
+          ],
+          "rules_missed": [],
+          "rules_extra": [
+            "R15"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M04",
+          "expected_disposition": "REVIEW",
+          "predicted_disposition": "REVIEW",
+          "disposition_match": true,
+          "expected_rules": [
+            "R13",
+            "R16"
+          ],
+          "rules_caught": [
+            "R13"
+          ],
+          "rules_missed": [
+            "R16"
+          ],
+          "rules_extra": [
+            "R15"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M05",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R19",
+            "R21",
+            "R15"
+          ],
+          "rules_caught": [
+            "R19",
+            "R21"
+          ],
+          "rules_missed": [
+            "R15"
+          ],
+          "rules_extra": [
+            "R20"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M06",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R01",
+            "R15"
+          ],
+          "rules_caught": [
+            "R01",
+            "R15"
+          ],
+          "rules_missed": [],
+          "rules_extra": [
+            "R22"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M07",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R01",
+            "R08"
+          ],
+          "rules_caught": [
+            "R01",
+            "R08"
+          ],
+          "rules_missed": [],
+          "rules_extra": [
+            "R15",
+            "R22"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M08",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R07",
+            "R13"
+          ],
+          "rules_caught": [
+            "R07",
+            "R13"
+          ],
+          "rules_missed": [],
+          "rules_extra": [],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M09",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R01",
+            "R02",
+            "R15"
+          ],
+          "rules_caught": [
+            "R01",
+            "R02",
+            "R15"
+          ],
+          "rules_missed": [],
+          "rules_extra": [
+            "R22"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M10",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REVIEW",
+          "disposition_match": false,
+          "expected_rules": [
+            "R16",
+            "R21"
+          ],
+          "rules_caught": [
+            "R16",
+            "R21"
+          ],
+          "rules_missed": [],
+          "rules_extra": [
+            "R15",
+            "R20"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M11",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R08",
+            "R13"
+          ],
+          "rules_caught": [
+            "R08",
+            "R13"
+          ],
+          "rules_missed": [],
+          "rules_extra": [],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M12",
+          "expected_disposition": "REVIEW",
+          "predicted_disposition": "REVIEW",
+          "disposition_match": true,
+          "expected_rules": [
+            "R03",
+            "R13"
+          ],
+          "rules_caught": [
+            "R03",
+            "R13"
+          ],
+          "rules_missed": [],
+          "rules_extra": [],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M13",
+          "expected_disposition": "PASS",
+          "predicted_disposition": "REVIEW",
+          "disposition_match": false,
+          "expected_rules": [],
+          "rules_caught": [],
+          "rules_missed": [],
+          "rules_extra": [
+            "R15",
+            "R22"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M14",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R16",
+            "R05"
+          ],
+          "rules_caught": [
+            "R16",
+            "R05"
+          ],
+          "rules_missed": [],
+          "rules_extra": [
+            "R15"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M15",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R19",
+            "R21",
+            "R08"
+          ],
+          "rules_caught": [
+            "R19",
+            "R21",
+            "R08"
+          ],
+          "rules_missed": [],
+          "rules_extra": [
+            "R20"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M16",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R09",
+            "R02"
+          ],
+          "rules_caught": [
+            "R02"
+          ],
+          "rules_missed": [
+            "R09"
+          ],
+          "rules_extra": [
+            "R15"
+          ],
+          "r18_extra": false
+        },
+        {
+          "case_id": "SYN-M17",
+          "expected_disposition": "REJECT",
+          "predicted_disposition": "REJECT",
+          "disposition_match": true,
+          "expected_rules": [
+            "R01",
+            "R03",
+            "R13"
+          ],
+          "rules_caught": [
+            "R01",
+            "R03",
+            "R13"
+          ],
+          "rules_missed": [],
+          "rules_extra": [
+            "R15",
+            "R22"
+          ],
+          "r18_extra": false
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "_comment": "RQ3: supplier-conditioned prompting ablation on 18 production cases (Table 5.2). Disposition accuracy and severity-weighted macro-F1 over the 14 language-model-regime rules (the only rules the supplier prior can move). Placebo is run only for the enforcer-free designs; 'null' marks an arm not run. The measured finding is a null effect on disposition accuracy.",
+  "n_cases": 18,
+  "arms": ["off", "on_loo", "placebo"],
+  "accuracy": {
+    "none":          {"off": 0.778, "on_loo": 0.778, "placebo": 0.778},
+    "deterministic": {"off": 0.778, "on_loo": 0.778, "placebo": null},
+    "llm":           {"off": 0.667, "on_loo": 0.667, "placebo": 0.611},
+    "tool_use":      {"off": 0.667, "on_loo": 0.778, "placebo": null},
+    "partition":     {"off": 0.778, "on_loo": 0.778, "placebo": null}
+  },
+  "lm_regime_f1": {
+    "none":          {"off": 0.365, "on_loo": 0.352, "placebo": 0.357},
+    "deterministic": {"off": 0.454, "on_loo": 0.337, "placebo": null},
+    "llm":           {"off": 0.332, "on_loo": 0.337, "placebo": 0.344},
+    "tool_use":      {"off": 0.483, "on_loo": 0.382, "placebo": null},
+    "partition":     {"off": 0.358, "on_loo": 0.278, "placebo": null}
+  }
+}
