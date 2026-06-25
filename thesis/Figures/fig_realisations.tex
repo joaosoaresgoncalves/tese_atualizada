@@ -1,0 +1,50 @@
+% Three realisations of the enforcer pattern
+% Requires: \usepackage{tikz}, \usetikzlibrary{positioning, arrows.meta, calc}
+\begin{tikzpicture}[
+    node distance=0.8cm and 1.8cm,
+    box/.style={
+        rectangle, draw=black, thick,
+        minimum width=3.2cm, minimum height=1.1cm,
+        align=center, font=\small
+    },
+    label/.style={
+        align=center, font=\small
+    },
+    arr/.style={->, thick, >=stealth},
+    darr/.style={<->, thick, >=stealth, dashed},
+]
+
+% Central box: Language model (Stage 5)
+\node[box] (llm) {Language model\\(Stage~5)};
+
+% Pre-hoc (left)
+\node[label, left=2.5cm of llm] (pre) {Pre hoc\\$\varphi_i$ runs\\before LLM};
+
+% Post-hoc (right)
+\node[label, right=2.5cm of llm] (post) {Post hoc\\$\varphi_i$ runs\\after LLM};
+
+% In-generation (below)
+\node[label, below=1.6cm of llm] (ingen) {In generation\\$\varphi_i$ called by\\LLM as tool};
+
+% Connecting lines
+% Pre-hoc: arrow from pre to the left side of LLM
+\draw[arr] (pre.east) -- (llm.west)
+    node[midway, above, font=\footnotesize] {input};
+
+% Post-hoc: arrow from right side of LLM to post
+\draw[arr] (llm.east) -- (post.west)
+    node[midway, above, font=\footnotesize] {override};
+
+% In-generation: bidirectional dashed arrow from LLM bottom to ingen
+\draw[darr] (llm.south) -- (ingen.north)
+    node[midway, right, font=\footnotesize, xshift=2pt] {tool call};
+
+% Brackets connecting pre-hoc to LLM input
+\draw[thick] ($(llm.north west)+(-0.15,0.25)$) -- ($(llm.north west)+(-0.15,0)$);
+\draw[thick] ($(llm.south west)+(-0.15,-0.25)$) -- ($(llm.south west)+(-0.15,0)$);
+
+% Brackets connecting LLM output to post-hoc
+\draw[thick] ($(llm.north east)+(0.15,0.25)$) -- ($(llm.north east)+(0.15,0)$);
+\draw[thick] ($(llm.south east)+(0.15,-0.25)$) -- ($(llm.south east)+(0.15,0)$);
+
+\end{tikzpicture}

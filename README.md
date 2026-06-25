@@ -88,7 +88,13 @@ sample_data/
   asn_overship.xml          an over-shipped ASN (expected REJECT on R01)
 notebooks/
   figures.ipynb        regenerates every data figure from results/
+thesis/
+  *.tex, *.bib, *.sty  LaTeX source of the dissertation
+  Figures/             the dissertation figures
 ```
+
+The dissertation source is in `thesis/`; the main file is
+`Dissertation_Joao_Goncalves_2026.tex`.
 
 ## Data and anonymisation
 

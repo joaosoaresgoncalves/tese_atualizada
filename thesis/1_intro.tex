@@ -1,0 +1,66 @@
+%% =====================================================================
+%%  1_intro.tex  --- Chapter 1: Introduction
+%% =====================================================================
+
+\chapter{Introduction} \label{chap:intro}
+
+This chapter introduces the dissertation. Section~\ref{sec:intro:context} sets out the context and the problem. Section~\ref{sec:intro:method} states the research method. Section~\ref{sec:intro:rqs} defines the research questions. Section~\ref{sec:intro:struct} outlines the remaining chapters.
+
+
+%% -----------------------------------------------------------------
+\section{Context and problem scope}
+\label{sec:intro:context}
+
+Procurement is one of the most document intensive functions of a modern manufacturer. Every purchase order placed with a supplier triggers a chain of structured documents that must be reconciled before goods are received and payment is released: order confirmation, advanced shipping notice, goods receipt, and invoice. The reliability of this reconciliation conditions the throughput of the procure-to-pay cycle, and the cost of letting a defective document through downstream is substantially higher than the cost of catching it on receipt, as the buyer reported correction loop with suppliers in Chapter~\ref{chap:empirical} attests.
+
+This dissertation studies one step of that chain: the validation of the Advanced Shipping Notice (ASN) against its originating Purchase Order (PO), in the procurement function of Hilti AG. The current gate is binary; an ASN is accepted or rejected on a static field check, with no semantic and no cross-document validation, and some defects fail silently. A rejected ASN draws a buyer into a manual reconciliation loop that the buyer team reports at 30 to 90 minutes per defect and 2 to 5 days to resolution. With thousands of ASNs processed every month across hundreds of suppliers, the problem is both concrete and costly.
+
+Operational document validation has nonetheless remained underserved by artificial intelligence research. Systematic reviews of artificial intelligence in supply chain management report that the field gravitates towards strategic decision support \citep{toorajipour2021,guida2023,bahroun2026}. The upstream step in scope here, matching a shipping notice to a purchase order before goods are received, has received almost no comparable treatment.
+
+The recent generation of large language models has changed the design space. A language model can interpret supplier specific field naming, reconcile address variants, and judge whether a transport term is consistent with a contract, none of which a deterministic rule engine can do without per-supplier configuration. The same models, however, are unreliable on closed-form arithmetic \citep{arkoudas2023,dziri2024} and lose accuracy as the number of concurrent instructions in a prompt grows \citep{jaroslawicz2025}. Document validation needs both arithmetic and semantic checks at once. Neither a pure rule engine nor a pure language model is therefore sufficient on its own.
+
+A growing literature has begun to propose hybrid pipelines that couple language model reasoning with deterministic verification \citep{prenosil2025,tarannum2026,goodell2025,bayless2025}. What this literature has not done is compare the major hybrid designs against each other on the same multi-rule validation task. This dissertation addresses that gap. It provides the first reported head-to-head comparison of the major hybrid validation designs on a single multi-rule task, and it formalises the \emph{enforcer pattern}, a deterministic layer that overrides the language model on a rule-by-rule basis where the verdict can be settled by computation rather than by judgement, as a reusable architectural component. The pattern is evaluated through an ablation of 5 alternative designs.
+
+The dissertation makes 3 contributions:
+\begin{itemize}
+  \item it formalises the enforcer pattern as a reusable architectural component for language model based document validation, independent of the document type and rule set;
+  \item it delivers the first head-to-head comparison of the major hybrid validation designs on a single multi-rule task, measuring the accuracy, cost, and latency trade-offs that decide which design to deploy;
+  \item it tests whether a supplier history prior adds value once a deterministic enforcer settles the computable rules.
+\end{itemize}
+
+
+%% -----------------------------------------------------------------
+\section{Research method and heuristic framework}
+\label{sec:intro:method}
+
+This work follows the Design Science Research Methodology of \citet{peffers2007dsrm}, which organises a design effort into 6 activities: identifying the problem, defining the solution objectives, designing the artefact, demonstrating it on a representative case, evaluating it against the objectives, and communicating the results. In the knowledge contribution framework of \citet{gregor2013dsr}, the dissertation sits in the improvement quadrant: a new solution to a known problem. Three solution objectives guide the design: to replace the binary gate with an auditable, tiered disposition; to settle every computable rule deterministically rather than by language model judgement; and to do so within a cost and latency envelope acceptable for production.
+
+The artefact is a compound validation pipeline built around the enforcer pattern, demonstrated on the procurement function of Hilti AG and evaluated against a deterministic baseline and against the alternative hybrid designs. It is exercised under 5 designs that differ in whether the deterministic enforcer is present and where it acts relative to the language model call. These designs support 2 comparisons, enforcer against no enforcer and one enforcer position against another, which correspond to the first 2 research questions; a separate ablation of the supplier conditioning layer addresses the third. The artefact, the evaluation set, and the metrics are specified in Chapters~\ref{chap:method} and~\ref{chap:empirical}, and the results are reported in Chapter~\ref{chap:results}.
+
+
+%% -----------------------------------------------------------------
+\section{Research questions}
+\label{sec:intro:rqs}
+
+Three research questions guide the empirical work.
+
+The first concerns the relative performance of the alternative hybrid designs.
+
+\textbf{RQ.1.} How do alternative pipeline designs for language model based document validation, namely the pure language model, the language model auditor, the deterministic enforcer applied after the model (post hoc) and before it (pre hoc), and in generation tool use, compare on per rule accuracy, document level disposition, cost, and latency?
+
+The second concerns where the deterministic enforcer should act.
+
+\textbf{RQ.2.} Does the position of the deterministic enforcer, applied before language model validation, during it as tool calls, or after it, affect validation accuracy, cost, and latency?
+
+The third concerns whether a supplier history prior helps a structured validation task, or is made redundant by the deterministic enforcer.
+
+\textbf{RQ.3.} Does conditioning the validation prompt on a supplier's historical failure record improve disposition accuracy, relative to switching that history off or replacing it with a placebo history?
+
+The empirical answers to all 3 questions are reported in Chapter~\ref{chap:results}, and their implications for procurement document validation in practice are drawn in Chapter~\ref{chap:conclusions}.
+
+
+%% -----------------------------------------------------------------
+\section{Dissertation structure}
+\label{sec:intro:struct}
+
+The remainder of the dissertation is organised in 5 chapters. Chapter~\ref{chap:lreview} reviews the literature and derives the research questions from the documented knowledge gaps. Chapter~\ref{chap:method} presents the methodology: the pipeline of 7 stages, the enforcer pattern, the supplier conditioning layer, the ablation of the 5 designs, and the evaluation instrument. Chapter~\ref{chap:empirical} describes the empirical study, the AS-IS process and its pain points, the TO-BE artefact, and the construction of the evaluation set. Chapter~\ref{chap:results} reports the results, contrasts the 5 designs, isolates the effect of the enforcer's position, and ablates the supplier history prior. Chapter~\ref{chap:conclusions} answers the research questions, sets out the contributions to practice and to research, declares the limitations, and proposes avenues for further research.

@@ -1,0 +1,100 @@
+% =====================================================================
+%  Figure 4.1 --- Five-mode ablation pipeline
+%  Self-contained TikZ. Drop this file into your figures directory and
+%  \input{figures/fig_4_1_five_modes.tex} at the figure site, OR paste
+%  the \begin{figure}...\end{figure} block directly into 4_results.tex.
+%
+%  Required packages (add to preamble if not already there):
+%    \usepackage{tikz}
+%    \usetikzlibrary{positioning, arrows.meta, fit, calc}
+%    \usepackage{xcolor}
+% =====================================================================
+
+\definecolor{modeBlue}{HTML}{D6E6F7}
+\definecolor{modeBlueE}{HTML}{4A86C5}
+\definecolor{modeAmber}{HTML}{FBE4C2}
+\definecolor{modeAmberE}{HTML}{D08A3A}
+\definecolor{modeTeal}{HTML}{CFEAE3}
+\definecolor{modeTealE}{HTML}{4EA893}
+\definecolor{modeGrey}{HTML}{ECECEC}
+\definecolor{modeGreyE}{HTML}{888888}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  >={Latex[length=2mm]},
+  stage/.style={draw, rounded corners=2pt, minimum height=8mm, minimum width=18mm,
+                inner sep=2pt, align=center, font=\footnotesize},
+  llm/.style={stage, fill=modeBlue, draw=modeBlueE},
+  det/.style={stage, fill=modeAmber, draw=modeAmberE},
+  judge/.style={stage, fill=modeTeal, draw=modeTealE},
+  util/.style={stage, fill=modeGrey, draw=modeGreyE},
+  modelabel/.style={anchor=east, font=\bfseries\small},
+  rowsep/.style={node distance=14mm}
+]
+
+% ----- Mode A: pure LLM -----
+\node[modelabel] (Alab) at (0, 0) {A \textnormal{\footnotesize pure LLM}};
+\node[util, right=2mm of Alab] (Ap) {Parse};
+\node[llm,  right=4mm of Ap, minimum width=34mm] (Allm) {LLM (rule evaluation)};
+\node[util, right=18mm of Allm, minimum width=24mm] (Ad) {Disposition};
+\draw[->] (Ap) -- (Allm);
+\draw[->, dashed] (Allm) -- (Ad);
+
+% ----- Mode B: post-hoc deterministic enforcer -----
+\node[modelabel] (Blab) at (0, -1.4) {B \textnormal{\footnotesize post-hoc enforcer}};
+\node[util, right=2mm of Blab] (Bp) {Parse};
+\node[llm,  right=4mm of Bp,  minimum width=22mm] (Bllm) {LLM};
+\node[det,  right=4mm of Bllm, minimum width=22mm] (Bd) {Deterministic};
+\node[util, right=4mm of Bd,  minimum width=24mm] (Bdisp) {Disposition};
+\draw[->] (Bp) -- (Bllm);
+\draw[->] (Bllm) -- (Bd);
+\draw[->] (Bd) -- (Bdisp);
+
+% ----- Mode C: LLM-as-judge -----
+\node[modelabel] (Clab) at (0, -2.8) {C \textnormal{\footnotesize LLM-as-judge}};
+\node[util, right=2mm of Clab] (Cp) {Parse};
+\node[llm,  right=4mm of Cp,  minimum width=22mm] (Cllm) {LLM};
+\node[judge,right=4mm of Cllm, minimum width=22mm] (Cj) {LLM judge};
+\node[util, right=4mm of Cj,  minimum width=24mm] (Cdisp) {Disposition};
+\draw[->] (Cp) -- (Cllm);
+\draw[->] (Cllm) -- (Cj);
+\draw[->] (Cj) -- (Cdisp);
+
+% ----- Mode D: in-generation tool use -----
+\node[modelabel] (Dlab) at (0, -4.4) {D \textnormal{\footnotesize in-generation tool use}};
+\node[util, right=2mm of Dlab] (Dp) {Parse};
+\node[llm,  right=4mm of Dp, minimum width=52mm] (Dllm) {LLM};
+\node[util, right=4mm of Dllm, minimum width=24mm] (Ddisp) {Disposition};
+\node[det,  above=5mm of Dllm, minimum width=34mm, minimum height=5mm,
+            font=\scriptsize] (Dtools) {Deterministic tools};
+\draw[->] (Dp) -- (Dllm);
+\draw[->] ([xshift=-12mm]Dllm.north) -- ([xshift=-12mm]Dtools.south);
+\draw[->] ([xshift=12mm]Dtools.south)  -- ([xshift=12mm]Dllm.north);
+\draw[->] (Dllm) -- (Ddisp);
+
+% ----- Mode E: pre-hoc partition -----
+\node[modelabel] (Elab) at (0, -5.8) {E \textnormal{\footnotesize pre-hoc partition}};
+\node[util, right=2mm of Elab] (Ep) {Parse};
+\node[det,  right=4mm of Ep,  minimum width=22mm] (Ed) {Deterministic};
+\node[llm,  right=4mm of Ed,  minimum width=22mm] (Ellm) {LLM};
+\node[util, right=4mm of Ellm,minimum width=24mm] (Edisp) {Disposition};
+\draw[->] (Ep) -- (Ed);
+\draw[->] (Ed) -- (Ellm);
+\draw[->] (Ellm) -- (Edisp);
+
+% ----- Legend -----
+\node[anchor=west, font=\scriptsize] at (-0.2, -7.1)
+  {\tikz\fill[modeBlue, draw=modeBlueE] (0,0) rectangle (0.32,0.32);\ LLM
+   \quad
+   \tikz\fill[modeAmber, draw=modeAmberE] (0,0) rectangle (0.32,0.32);\ deterministic stage
+   \quad
+   \tikz\fill[modeTeal, draw=modeTealE] (0,0) rectangle (0.32,0.32);\ LLM-as-judge
+   \quad
+   \tikz\fill[modeGrey, draw=modeGreyE] (0,0) rectangle (0.32,0.32);\ parse / disposition};
+
+\end{tikzpicture}
+\caption{The five ablation modes evaluated in this chapter. The deterministic stage (amber) is absent in A, applied after the LLM in B, called mid-generation as tools in D, and applied before the LLM in E. Mode C uses an LLM-as-judge (teal) instead of a deterministic stage.}
+\label{fig:res:modes}
+\end{figure}

@@ -477,5 +477,98 @@
         1
       ]
     }
+  },
+  "confusion": {
+    "_comment": "Per-design 3x3 disposition confusion on the 67 synthetic cases under Mistral-Large-3 (majority of 3 replays). Rows=ground truth [PASS,REVIEW,REJECT], cols=pipeline. Computed with the project label resolver; reproduces the published accuracies exactly.",
+    "labels": [
+      "PASS",
+      "REVIEW",
+      "REJECT"
+    ],
+    "none": [
+      [
+        1,
+        9,
+        0
+      ],
+      [
+        1,
+        19,
+        2
+      ],
+      [
+        1,
+        15,
+        19
+      ]
+    ],
+    "deterministic": [
+      [
+        2,
+        7,
+        1
+      ],
+      [
+        0,
+        22,
+        0
+      ],
+      [
+        0,
+        16,
+        19
+      ]
+    ],
+    "llm": [
+      [
+        1,
+        6,
+        3
+      ],
+      [
+        0,
+        15,
+        7
+      ],
+      [
+        0,
+        18,
+        17
+      ]
+    ],
+    "tool_use": [
+      [
+        7,
+        2,
+        1
+      ],
+      [
+        1,
+        18,
+        3
+      ],
+      [
+        0,
+        4,
+        31
+      ]
+    ],
+    "partition": [
+      [
+        8,
+        1,
+        1
+      ],
+      [
+        7,
+        13,
+        2
+      ],
+      [
+        9,
+        1,
+        25
+      ]
+    ]
   }
 }

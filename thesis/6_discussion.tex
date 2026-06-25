@@ -1,0 +1,113 @@
+% Chapter 6: Conclusion
+% Bibliography keys used: gregor2013, sadowski2026, bahroun2026,
+% zheng2023, stechly2024, un2030agenda, eurostat2025.
+
+\chapter{Conclusion} \label{chap:conclusions}
+
+This chapter draws the conclusions of the dissertation. Section~\ref{sec:concl:results} summarises the results and answers the 3 research questions. Sections~\ref{sec:concl:practice} and~\ref{sec:concl:research} set out the contributions to practice and to research. Section~\ref{sec:concl:limitations} states the limitations, Section~\ref{sec:concl:future} the avenues for further research, and Section~\ref{sec:concl:sdg} the work's alignment with the Sustainable Development Goals.
+
+\section{Results}
+\label{sec:concl:results}
+
+This dissertation designed and evaluated an artefact for the automated validation of advanced shipping notices against their originating purchase orders, a task carried out manually at the partner organisation. Framed as design science research in the improvement quadrant \citep{gregor2013dsr}, the artefact is a staged pipeline that combines a large language model with a deterministic enforcer, evaluated under 5 designs on 67 synthetic and 32 buyer cases.
+
+RQ.1 asks how the 5 designs compare. The deterministic enforcer separates them: the 3 enforcer bearing designs (post hoc, in generation, pre hoc) reach 0.88 buyer accuracy against 0.81 for the 2 enforcer free designs, a gap that widens to 20 points on the synthetic sample, where the LLM-as-judge design collapses, the only statistically reliable contrast. The separation is a property of the architecture, not the model: it reproduces under a second model from a different family (Mistral-Large-3, Section~\ref{sec:results:crossmodel}), where the gap in fact widens rather than closes. Among the 3 enforcer bearing designs accuracy is tied, so the choice between them is settled on operational grounds: the pre hoc design is the one to deploy, matching the top accuracy at the lowest cost and latency, as RQ.2 details.
+
+RQ.2 asks whether the enforcer's position matters. It does not for accuracy, but it does for the operational cost. Position works through the instruction density of the model's prompt, the second knowledge gap Chapter 2 identified: pre hoc settles the 8 deterministic rules upstream and scopes the model to the remaining 14, where post hoc and in generation leave it to reason over all 22. On accuracy no pairwise contrast survives the Holm correction on 32 buyer cases, so the position is immaterial; on operations the gain is large and stable, a cost ratio of 2.34 between pre hoc and in generation. The pre hoc design is therefore the production candidate, matching the top accuracy while leading on cost, latency and reproducibility; the post hoc design is the alternative where per rule coverage and auditability matter more than cost.
+
+RQ.3 asks whether a supplier history prior helps. On this sample it does not: disposition accuracy is unchanged across the off, leave-one-out and placebo arms, and a strict past-only variant reproduces the null. Reliability comes from the deterministic enforcer, not the retrieved context, consistent with the third knowledge gap Chapter 2 identified, that retrieval addresses factuality rather than computational faithfulness. The negative result is itself useful: where the enforcer settles the computable rules, the prior adds little, so engineering effort is better spent on the enforcer than on the prior.
+
+These answers also meet the 3 solution objectives set in Section~\ref{sec:intro:method}. The binary gate is replaced by an auditable, tiered PASS, REVIEW or REJECT disposition (Chapter~\ref{chap:empirical}); every computable rule is settled deterministically in the enforcer bearing designs (Chapter~\ref{chap:method}); and the recommended design runs at EUR 0.073 per ASN and 7.89 seconds median, within a production envelope (Chapter~\ref{chap:results}).
+
+\section{Contribution to Practice}
+\label{sec:concl:practice}
+
+For the partner organisation, the artefact replaces a binary accept or reject gate with a staged pipeline and a tiered PASS, REVIEW or REJECT disposition. The current process draws a buyer into a manual reconciliation loop reported at 30 to 90 minutes per defect and 2 to 5 days to resolution; the artefact removes the routine portion of that work and presents an auditable verdict in which the enforcer recomputes every deterministic rule and records why each fired. The recommended configuration is the pre hoc design: cheapest (EUR 0.073 per ASN), fastest (7.89 seconds median), and, like every enforcer bearing design, it is safe on the buyer sample, where its only errors send a sound ASN to review rather than letting a defective one through. For a first deployment this conservative profile is the right one. The cross-model result also means the partner is not locked into one model vendor: the enforcer preserves disposition reliability when the underlying model changes, so the model can be swapped on cost or availability grounds.
+
+The size of that saving can be estimated. A representative month of live production carried 2,331 ASNs, of which 51 failed validation, so of the order of 610 failed ASNs per year each trigger the 30 to 90 minute correction loop. Allowing for the multi-PO handling measured in the sample and an assumed escalation across buyers (Appendix~\ref{app:operational}), automating the detection removes an estimated 570 to 1,700 analyst hours per year, of the order of EUR 22,000 to 65,000 at the partner's loaded hourly cost. The saving is the same for every pipeline design, since all 5 produce the same disposition, and it exceeds the compute cost, of the order of EUR 2,000 per year at the recommended design's per-ASN rate (Section~\ref{sec:results:cost}), by about an order of magnitude. A defect caught on receipt avoids that same correction loop downstream, so the gain is the loop removed rather than a separate downstream cost.
+
+In practical terms, the evidence supports 4 recommendations for the partner organisation:
+\begin{itemize}
+  \item deploy the pre hoc design, which matches the best accuracy at the lowest cost and latency and is the only design whose verdicts were identical across all repeated runs;
+  \item keep the buyer in the loop on every REJECT, since the design's errors are over-rejections and a reviewer recovers them at low cost;
+  \item address the supplier REJECT cluster upstream, fixing the recurring currency, transport term and ship-to defects in onboarding and master data;
+  \item refresh the supplier profiles from buyer validated audit log entries, so the conditioning layer stays grounded in confirmed dispositions as volume grows.
+\end{itemize}
+
+\section{Contribution to Research}
+\label{sec:concl:research}
+
+The work makes 3 contributions to research. The first is the formalisation of the enforcer pattern as a reusable architectural component for language model based document validation: the enforcer is defined independently of the document type and the rule set, as the component that deterministically recomputes the rules whose verdict can be settled by computation and holds authority over the disposition for those rules. Any validation task that mixes judgement rules with computation rules can adopt it, and the design question becomes where in the pipeline the enforcer should act. The pattern's value is model agnostic, as the cross-model replication shows. The distinctive element over established in generation tool use, where the model still owns the final verdict, is precisely this deterministic authority, which the enforcer holds when applied post hoc or pre hoc.
+
+The second is the comparison itself. A direct head-to-head comparison of the major hybrid pipeline designs on a single multi-rule structured validation task had been called for explicitly \citep{bahroun2026}, and this dissertation provides it: the 5 designs are evaluated on the same rules, samples and metrics, so the observed differences are attributable to the designs. The placement contrast among the 3 enforcer positions also supplies the first empirical test, in a structured validation setting, of whether reducing instruction density yields accuracy or cost gains, the question Chapter 2 identified as the second knowledge gap.
+
+The third concerns the LLM-as-judge design, whose last place is consistent with the existing judge model literature: judges report high agreement on open-ended comparison \citep{zheng2023} but degrade structured reasoning outcomes \citep{stechly2024}, and document validation is precisely the regime in which a privileged deterministic computation the judge cannot perform makes the judge ineffective. The enforcer's binary verdict, and not its written rationale, is what carries the gain, with the rationale serving the human reviewer in the audit trail.
+
+Beyond these, a smaller contribution is the negative result on supplier conditioning. A controlled ablation, switching a supplier history prior off, on under a leave-one-out protocol, to a placebo and to a strict past-only variant, shows that once a deterministic enforcer settles the computable rules, the prior adds no measurable accuracy. The result bounds where retrieval helps in this regime: it addresses factuality, not the computational faithfulness that document validation turns on.
+
+These contributions close the 3 knowledge gaps Chapter~\ref{chap:lreview} identified, as Table~\ref{tab:concl:gaps} summarises.
+
+\begin{table}[htb]
+\centering
+\caption{Knowledge gaps of Chapter~\ref{chap:lreview} and how the dissertation closes them.}
+\label{tab:concl:gaps}
+\footnotesize
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{@{}p{4.2cm}p{4.6cm}p{4.6cm}@{}}
+\toprule
+\textbf{Knowledge gap (Chapter 2)} & \textbf{Contribution} & \textbf{Evidence} \\
+\midrule
+No head-to-head comparison of the major hybrid validation designs & First benchmark of the 5 designs on a single 22-rule task, plus the enforcer pattern & Enforcer bearing designs at 0.88 against 0.81; gap reproduces and widens under a second model (Sections~\ref{sec:results:comparison} and~\ref{sec:results:crossmodel}) \\
+Instruction density effects untested in structured validation & First empirical test of enforcer position, which acts through prompt density & Operational gain large and stable, accuracy gain directional (Section~\ref{sec:results:position}) \\
+Supplier history grounding untested against a deterministic enforcer & Controlled off/on/placebo ablation with a past-only variant & Null effect on all arms (Section~\ref{sec:results:rag}) \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+\section{Limitations}
+\label{sec:concl:limitations}
+
+The conclusions are qualified by 5 limitations.
+
+\textbf{Sample size.} The samples are small, 67 synthetic and 32 buyer cases, so the bootstrap intervals are wide. On the buyer sample no pairwise accuracy contrast survives the Holm correction; the one statistically reliable contrast in the study, the collapse of the LLM-as-judge design, is on the synthetic sample. A power check confirms the buyer null is a sample size limit rather than evidence of no effect: at n equal to 32 only effects of Cohen's h around 0.70 or larger are detectable, against an observed enforcer gap of about 0.17. The buyer-sample contrasts are therefore read as directional. Combining the two samples would raise the apparent power, but most of the combined set is synthetic and its size was a design choice, so the buyer comparisons are kept on their own.
+
+\textbf{Independence of cases.} The 32 buyer cases are drawn from 19 suppliers and cluster by supplier, so they are not fully independent and the effective sample is smaller than 32. This is a further reason to read the buyer contrasts as directional rather than as significance tests.
+
+\textbf{Ground truth.} The buyer ground truth is a consensus of 3 analysts from the same organisation. Because the analysts share that organisation's conventions, their judgements are not independent of one another, and the reference reflects one organisation's reading of the rules rather than a universal standard. The per analyst labels were reconciled live and only the consensus was retained, so an inter-rater coefficient cannot be computed retrospectively. A panel drawn from several organisations, with the individual labels recorded, would test how far the consensus generalises.
+
+\textbf{Severity specification.} A firing's severity is protected only where the enforcer acts. On the 2 enforcer free designs the model owns severity, and R06 (line item completeness, which asks whether every PO line has a matching ASN item) is the clearest example: its deterministic check grades missing lines as warning when they trace to a declared partial delivery, but the pure LLM and LLM-as-judge designs escalate the same firing to critical and over-reject. This is the mechanism behind most of the over-rejections in Chapter~\ref{chap:results}. Decoupling severity assignment from rule firing, so that severity is owned deterministically even where the verdict needs judgement, would close the gap and is left to future work.
+
+\textbf{Scope.} The study is bounded to one organisation, one document pair (the ASN against its PO) and an offline evaluation. The pipeline was not run in live production, so the buyers' acceptance of its verdicts and their override behaviour are not measured. The cross-model check uses 3 replays per case, fewer than the primary model's 5, and is read as a robustness check rather than a full re-evaluation. How the findings transfer to other document types and to a live deployment is open; order confirmations and invoices are the natural first candidates (Section~\ref{sec:concl:future}).
+
+\section{Avenues for Further Research}
+\label{sec:concl:future}
+
+Six directions follow. A larger evaluation would narrow the bootstrap intervals and could settle whether the pre hoc and post hoc designs are genuinely indistinguishable. Extending the analyst panel beyond one organisation would test how far the consensus generalises. Refining the specification so severity is owned deterministically on every design, not only where the enforcer acts, would close the severity gap of Section~\ref{sec:concl:limitations}. A live deployment would measure what the offline evaluation cannot: how readily the buyers accept the pipeline's verdicts and how often they override them. A further direction is to apply the methodology to other procurement documents validated inside the partner organisation, in particular order confirmations and invoices, which share the structure the artefact already handles: a supplier document checked against an order baseline. Because the enforcer pattern is defined independently of the document type (Section~\ref{sec:concl:research}), the architecture should transfer once a rule register is derived for each document, and the arithmetic-heavy invoice check, matched against the purchase order and the goods receipt, is well suited to the deterministic enforcer. Finally, the supplier conditioning layer showed a null effect on the 18 case ablation (Section~\ref{sec:results:rag}); a larger supplier sample and a richer history than the single injected line would establish whether the layer can contribute at all, and given the supplier clustering finding it remains a plausible place to look for further accuracy gains.
+
+\section{Alignment with the Sustainable Development Goals}
+\label{sec:concl:sdg}
+
+The work intersects with the United Nations 2030 Agenda for Sustainable Development and its 17 Sustainable Development Goals \citep{un2030agenda}, against which Eurostat monitors EU progress through an annual indicator set \citep{eurostat2025}. Two goals map directly onto the contribution and a third applies indirectly; Table~\ref{tab:concl:sdg} summarises the alignment, the specific targets, and the indicators through which the impact can be measured. The SDG 9 contribution is the technological upgrade itself: the artefact upgrades the validation workflow at the document gate, and the enforcer pattern is a reusable component for other validation tasks, measured by the cost and latency per validated ASN (Section~\ref{sec:results:cost}). The SDG 8 contribution is the one the study quantifies: the labour saving of Section~\ref{sec:concl:practice}, of the order of 570 to 1,700 analyst hours per year on the live volume, is the work's primary measured impact.
+
+The SDG 12 alignment is contextual: the work does not measure environmental impact directly, and the indicator reflects reporting capability rather than measured environmental outcome.
+
+\begin{table}[!ht]
+\centering
+\caption{Alignment with the Sustainable Development Goals: targets, contribution and indicators.}
+\label{tab:concl:sdg}
+\small
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{2.8cm}>{\raggedright\arraybackslash}p{2.9cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
+\toprule
+\textbf{SDG} & \textbf{Target} & \textbf{Contribution} & \textbf{Indicator and metric} \\
+\midrule
+9. Industry, Innovation and Infrastructure & 9.5, upgrading technological capabilities & Upgrades the validation workflow at the document gate; the enforcer pattern is a reusable component for other validation tasks & Cost and latency per validated ASN (EUR 0.073 per ASN, 7.89\,s median), measured in Chapter~\ref{chap:results} \\
+\addlinespace
+8. Decent Work and Economic Growth & 8.2, productivity through technological upgrading & Removes the routine portion of defect handling; analysts shift from repetitive reconciliation to the cases that need judgement & Analyst hours saved per year, of the order of 570 to 1{,}700 for the live volume (Section~\ref{sec:concl:practice}) \\
+\addlinespace
+12. Responsible Consumption and Production & 12.6, corporate sustainability practices and reporting & The structured audit log supports reporting; supplier clustering directs upstream master data fixes & Share of dispositions with a full audit trail, every disposition by construction \\
+\bottomrule
+\end{tabularx}
+\end{table}

@@ -1,0 +1,43 @@
+% Seven-stage compound pipeline diagram
+% Requires: \usepackage{tikz}
+\begin{tikzpicture}[
+    node distance=0.35cm,
+    stage/.style={
+        rectangle, draw=black, thick, rounded corners=3pt,
+        minimum width=1.7cm, minimum height=1.3cm,
+        text width=1.5cm, align=center, font=\small
+    },
+    llmstage/.style={
+        stage, fill=black!12
+    },
+    arr/.style={->, thick, >=stealth},
+    numlabel/.style={font=\footnotesize\bfseries, above=0pt}
+]
+% Nodes
+\node[stage]    (s1) {\strut Retrieve\\PO};
+\node[stage, right=of s1] (s2) {\strut Ingest\\ASN};
+\node[llmstage, right=of s2] (s3) {\strut Normalise\\ASN};
+\node[stage, right=of s3] (s4) {\strut Assemble\\context};
+\node[llmstage, right=of s4] (s5) {\strut Evaluate\\rules};
+\node[stage, right=of s5] (s6) {\strut Enforce\\output};
+\node[stage, right=of s6] (s7) {\strut Reduce to\\disposition};
+
+% Stage numbers
+\node[numlabel] at (s1.north) {1.};
+\node[numlabel] at (s2.north) {2.};
+\node[numlabel] at (s3.north) {3.};
+\node[numlabel] at (s4.north) {4.};
+\node[numlabel] at (s5.north) {5.};
+\node[numlabel] at (s6.north) {6.};
+\node[numlabel] at (s7.north) {7.};
+
+% Arrows
+\draw[arr] (s1) -- (s2);
+\draw[arr] (s2) -- (s3);
+\draw[arr] (s3) -- (s4);
+\draw[arr] (s4) -- (s5);
+\draw[arr] (s5) -- (s6);
+\draw[arr] (s6) -- (s7);
+
+
+\end{tikzpicture}

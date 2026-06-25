@@ -1,0 +1,204 @@
+%% =====================================================================
+%%  A_Appendix1.tex  --- Appendix A: Rule Register and Prompt Examples
+%% =====================================================================
+
+\chapter{Methodology supporting material} \label{app:rules}
+
+This appendix gathers the supporting material for the methodology of Chapter~\ref{chap:method}: the complete rule register and failure-mode taxonomy (A.1), prompt technique examples (A.2), the deterministic tools and enforcer action types (A.3), reproducibility and availability (A.4), the metric definitions (A.5), and the evaluation benchmarks reviewed in Chapter~\ref{chap:lreview} (A.6).
+
+\section*{A.1\quad Complete rule register (R01--R22)}
+
+Table~\ref{tab:app:rules} lists every validation rule used in the pipeline, together with its category, severity, one-line check description, and regime assignment.
+
+\footnotesize
+\begin{longtable}{@{}cp{3.2cm}p{1.8cm}p{1.8cm}p{4.2cm}p{2cm}@{}}
+\caption{Complete rule register (R01--R22).} \label{tab:app:rules} \\
+\toprule
+\textbf{Rule} & \textbf{Name} & \textbf{Category} & \textbf{Severity} & \textbf{Check (one line)} & \textbf{Regime} \\
+\midrule
+\endfirsthead
+\caption[]{Complete rule register (R01--R22) --- \emph{continued}.} \\
+\toprule
+\textbf{Rule} & \textbf{Name} & \textbf{Category} & \textbf{Severity} & \textbf{Check (one line)} & \textbf{Regime} \\
+\midrule
+\endhead
+\midrule
+\multicolumn{6}{r}{\emph{Continued on next page}} \\
+\endfoot
+\bottomrule
+\endlastfoot
+R01 & Shipped quantity match        & Arithmetic  & Critical      & ASN shipped quantity within the PO tolerance band                                        & Deterministic \\
+R02 & Unit price match              & Arithmetic  & Critical      & ASN unit price within the PO tolerance band                                              & Deterministic \\
+R03 & Delivery date feasibility     & Arithmetic  & Warning       & ASN delivery date within the PO tolerance window                                         & Deterministic \\
+R04 & Shipment date realism         & Arithmetic  & Warning       & shipmentDate not in the past relative to noticeDate; deliveryDate $\geq$ shipmentDate; requires date coherence judgement    & Language model \\
+R05 & UOM consistency               & Structural  & Critical      & ASN unit of measure matches the PO exactly                                               & Language model \\
+R06 & Line item completeness        & Structural  & Crit.\ (downgr.) & Every PO line in the portion has a corresponding ASN item; graded warning when the missing lines trace to a declared partial delivery & Deterministic \\
+R07 & No phantom lines              & Structural  & Critical      & ASN contains no item referencing a non-existent PO line                                  & Language model \\
+R08 & Currency match                & Structural  & Critical      & ASN currency matches the PO at header and line level                                     & Language model \\
+R09 & Supplier ID validation        & Structural  & Critical      & ASN supplier network ID matches the PO supplier network ID                               & Language model \\
+R10 & PO reference integrity        & Structural  & Critical      & Each portion references a valid, existing PO orderID                                     & Language model \\
+R11 & Schema compliance             & Structural  & Informational & ASN is valid cXML and parsed without errors                                              & Language model \\
+R12 & Mandatory field presence      & Structural  & Warning       & Required ASN header and item fields are present                                          & Language model \\
+R13 & Transport terms match         & Semantic    & Warning       & ASN incoterms match the PO incoterms                                                     & Language model \\
+R14 & Ship-to address match         & Semantic    & Warning       & ASN ship-to address matches the PO ship-to address                                       & Language model \\
+R15 & Total value reconciliation    & Arithmetic  & Warning       & qty $\times$ unitPrice matches the PO line total within tolerance                        & Deterministic \\
+R16 & Partial-shipment handling     & Arithmetic  & Info.\ (esc.) & Partial shipment flagged with remaining quantity; escalates when R01 detects under-ship   & Deterministic \\
+R17 & Multi-PO consolidation        & Structural  & Warning       & Cross-PO boundary integrity for multi-PO ASNs                                            & Language model \\
+R18 & Duplicate ASN detection       & Structural  & Critical      & shipmentID + PO set not previously seen (persisted state)                                & Deterministic \\
+R19 & ShipmentID length             & Structural  & Critical      & shipmentID $\leq$ 35 characters                                                         & Deterministic \\
+R20 & Weight plausibility           & Arithmetic  & Warning       & grossWeight $>$ netWeight and grossWeight $\leq$ netWeight $\times$ 10                   & Language model \\
+R21 & Mandatory packaging fields    & Structural  & Critical      & Required packaging fields are present                                                    & Language model \\
+R22 & Order fulfilment status       & Arithmetic  & Warning       & Total notified quantity does not exceed PO quantity                                       & Language model \\
+\end{longtable}
+\normalsize
+
+Table~\ref{tab:method:taxonomy} arranges the same register by the taxonomy of failure modes of Section~\ref{sec:method:taxonomy}, placing each rule in its category and severity cell.
+
+\begin{table}[htbp]
+\centering
+\caption{Taxonomy of failure modes.}
+\label{tab:method:taxonomy}
+\footnotesize
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{@{}lp{2.2cm}p{4.2cm}p{5.8cm}@{}}
+\toprule
+                    & \textbf{Informational} & \textbf{Warning}              & \textbf{Critical} \\
+\midrule
+\textbf{Arithmetic} & R16                   & R03, R04, R15, R20, R22       & R01, R02           \\
+\textbf{Structural} & R11                   & R12, R17                      & R05, R06, R07, R08, R09, R10, R18, R19, R21 \\
+\textbf{Semantic}   & ---                   & R13, R14                      & ---                \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+
+%% -----------------------------------------------------------------
+\section*{A.2\quad Prompt technique examples} \label{app:prompt}
+
+Table~\ref{tab:app:prompt} reproduces illustrative excerpts from the Stage~5 system prompt, one for each of the four prompt engineering techniques described in Section~\ref{sec:method:prompt}.
+
+\begin{table}[htbp]
+\centering
+\caption{Prompt engineering technique excerpts from the Stage~5 system prompt.}
+\label{tab:app:prompt}
+\footnotesize
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{@{}p{3.2cm}p{9.5cm}@{}}
+\toprule
+\textbf{Technique} & \textbf{Illustrative excerpt} \\
+\midrule
+Persona prompting      & ``You are an expert procurement validation agent for the partner organisation.'' \\[6pt]
+Task decomposition     & Three numbered sub-tasks: (1)~line alignment between ASN and PO, (2)~rule-by-rule evaluation, (3)~semantic analysis of findings that fall outside the rule set. \\[6pt]
+Few-shot prompting     & Three worked examples shown before the case to evaluate: a clean ASN (all rules pass), an R01 over-shipment fail, and an R19 shipmentID-too-long fail. \\[6pt]
+Chain-of-thought       & ``When checking R01, R02, and R15, show your calculations explicitly.'' \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+
+%% -----------------------------------------------------------------
+\section*{A.3\quad Deterministic tools (in generation realisation)}
+
+Table~\ref{tab:method:tools} lists the 7 callable tools exposed to the language model in the in generation realisation of Section~\ref{sec:method:enforcer:realisations}, each covering one deterministic regime rule.
+
+\begin{table}[htbp]
+\centering
+\caption{Deterministic tools available in the in generation realisation.}
+\label{tab:method:tools}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Tool} & \textbf{Rule(s) covered} \\
+\midrule
+\texttt{verify\_quantity\_match}     & R01 --- shipped quantity match       \\
+\texttt{verify\_price\_match}        & R02 --- unit price match             \\
+\texttt{verify\_date\_arithmetic}    & R03 --- delivery date feasibility    \\
+\texttt{verify\_line\_completeness}  & R06 --- line item completeness       \\
+\texttt{verify\_line\_total}         & R15 --- total value reconciliation   \\
+\texttt{verify\_partial\_shipment}   & R16 --- partial shipment handling    \\
+\texttt{verify\_shipment\_id\_length}& R19 --- shipmentID length            \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:method:actions} lists the 3 logged action types the enforcer records on the rule triples, as described in Section~\ref{sec:method:enforcer:aux}.
+
+\begin{table}[htbp]
+\centering
+\caption{Enforcer action types.}
+\label{tab:method:actions}
+\footnotesize
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{@{}lp{11cm}@{}}
+\toprule
+\textbf{Action} & \textbf{Triggering condition} \\
+\midrule
+Override          & The deterministic check on a rule in the deterministic regime disagrees with the language model's verdict; the enforcer's verdict prevails. \\
+Rule injection    & The language model omits a verdict for a rule. The enforcer inserts the deterministic verdict for rules in the deterministic regime, or a default with a diagnostic note for rules in the language model regime. \\
+Severity capping  & The language model returns a severity that differs from the rule's registered severity in Appendix~\ref{app:rules}. The enforcer clamps the severity to the registered value. \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+
+%% -----------------------------------------------------------------
+\section*{A.4\quad Reproducibility and availability}
+\label{app:repro}
+
+The pipeline source code, the rule register, the synthetic generator, and the anonymised evaluation data and run artefacts are released to support replication, at \url{https://github.com/joaosoaresgoncalves/tese_atualizada}. Together with the fixed model, temperature, and seed described in Section~\ref{sec:method:constraints}, this lets every figure and table in Chapter~\ref{chap:results} be regenerated from the released artefacts.
+
+
+%% -----------------------------------------------------------------
+\section*{A.5\quad Disposition and per rule metric definitions}
+\label{app:metrics}
+
+This section gives the definitions of the disposition and per rule metrics used in Section~\ref{sec:method:eval}.
+
+The document level agreement metric is Cohen's quadratically weighted kappa,
+%
+\begin{equation}\label{eq:kappa}
+  \kappa_w = 1 - \frac{\sum_{ij} w_{ij}\, p_{o,ij}}{\sum_{ij} w_{ij}\, p_{e,ij}}
+\end{equation}
+%
+where $p_{o,ij}$ is the observed proportion of documents falling in cell $(i,j)$ of the disposition confusion matrix, $p_{e,ij}$ is the proportion expected if the pipeline and the expert decided independently, and $w_{ij} = (i-j)^2/(k-1)^2$ is the quadratic weight, with $k=3$ the number of categories. The coefficient equals~1 when the pipeline and the expert agree on every document, and~0 when their agreement is no better than chance.
+
+The per rule summary metric is the severity weighted macro F1,
+%
+\begin{equation}\label{eq:f1w}
+  F_{1,w} = \frac{\sum_i w_i\, F_{1,i}}{\sum_i w_i}
+\end{equation}
+%
+with $F_{1,i}$ the F1-score of rule~$i$ and $w_i$ its severity weight (1~for informational, 2~for warning, 3~for critical), so that rules whose failure carries higher operational consequence weigh more in the aggregate.
+
+
+%% -----------------------------------------------------------------
+\section*{A.6\quad Evaluation benchmarks from the literature}
+
+Table~\ref{tab:lr:benchmarks} catalogues the evaluation benchmarks and frameworks reviewed in Section~\ref{sec:lr:sota:benchmarks}.
+
+\begin{table}[htbp]
+\centering
+\caption{Evaluation benchmarks and frameworks relevant to hybrid validation pipelines.}
+\label{tab:lr:benchmarks}
+\footnotesize
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{@{}p{2.1cm}p{2.6cm}p{6.3cm}p{2.6cm}@{}}
+\toprule
+\textbf{Benchmark} & \textbf{Focus} & \textbf{Key feature} & \textbf{Reference} \\
+\midrule
+RAGAS           & RAG evaluation                                  & Reference-free modular metrics (faithfulness, context relevance, answer relevance)                              & \citet{es2024}                       \\
+ARES            & RAG evaluation                                  & Fine-tuned LLM judges with prediction-powered inference; $\sim$150 (150--300 recommended) human-annotated datapoints & \citet{saadfalcon2024}            \\
+TabFact         & Table fact verification                         & 118,275 statements against 16,573 tables; linguistic + symbolic reasoning                                       & \citet{chen2020tabfact}              \\
+FEVEROUS        & Fact verification over unstructured + tabular evidence & Hybrid-evidence fact verification                                                                       & \citet{aly2021}                      \\
+TAT-QA / FinQA  & Numerical reasoning over tables + text          & Financial QA benchmarks                                                                                        & \citet{zhu2021}; \citet{chen2021finqa} \\
+FinanceBench    & Financial QA                                    & 10,231 expert-annotated triplets from SEC filings; GPT-4 errors on 81\%                                         & \citet{islam2023}                    \\
+OHRBench        & OCR-to-RAG cascading errors                     & 8,561 document images; quantifies OCR error propagation through RAG                                             & \citet{zhang2025ocr}                 \\
+FActScore       & Factual precision                               & Atomic fact decomposition; fine-grained per-claim verification                                                 & \citet{min2023factscore}             \\
+JSONSchemaBench & Constrained decoding                            & Six frameworks on real world JSON schemas                                                                      & \citet{geng2025}                     \\
+IFScale         & Instruction density                             & Scales 10--500 instructions; measures LLM degradation at high density                                          & \citet{jaroslawicz2025}              \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}

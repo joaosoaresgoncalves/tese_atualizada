@@ -1,0 +1,144 @@
+%% =====================================================================
+%%  Dissertation_Joao_Goncalves_2026.tex  --- Master file
+%%  FEUP MIEGI dissertation (English).
+%%  Based on the FEUP LaTeX template (TemplateRelatorioDissertacaoMEGI).
+%% =====================================================================
+
+\documentclass[11pt, a4paper, openany, twoside]{report}
+
+\usepackage[margins]{trackchanges}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage[acronym,nomain]{glossaries}
+\usepackage{feupteses}
+\usepackage{smartdiagram}
+\RequirePackage{mathptmx}
+\usepackage{setspace}
+\usepackage{wrapfig}
+\usepackage{mathtools}
+\usepackage{adjustbox}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{tabulary}
+\usepackage[listings]{tcolorbox}
+\usepackage[official]{eurosym}
+\usepackage{subfig}
+%\usepackage[]{algorithm2e}
+\usepackage{graphicx}
+\usepackage{lscape}
+\usepackage{rotating}
+\usepackage{epstopdf}
+\usepackage{framed}
+\usepackage{array}
+\usepackage{tikz}
+\usetikzlibrary{calc, arrows.meta, positioning}
+\usepackage{ifthen}
+\usepackage[inline]{enumitem}
+\usepackage{pdflscape}[2016/05/14]
+\usepackage{caption, floatrow, tabularx, makecell, booktabs, longtable}
+%\usepackage{siunitx}
+\usepackage{textcomp}
+\usepackage{floatrow}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+\usepackage{multirow}
+\floatsetup[table]{capposition=top}
+
+\newcommand{\PH}[1]{\textcolor{red}{\textbf{#1}}}
+
+\newenvironment{myitemize}
+{ \begin{enumerate}
+    \setlength{\itemsep}{0pt}
+    \setlength{\parskip}{0pt}
+    \setlength{\parsep}{0pt}     }
+{ \end{enumerate}}
+
+\graphicspath{{Figures/}}
+
+% Top-align floats on float pages; keep stacked floats together (no stretchy gap)
+\makeatletter
+\setlength{\@fptop}{0pt}
+\setlength{\@fpsep}{8pt}
+\makeatother
+
+\begin{document}
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{1}
+\include{mymacros}
+
+%---------------Cover----------------%
+\newpage
+\begin{framed}
+\vspace*{75mm}
+\begin{center}
+\huge \textbf{Hybrid LLM Deterministic Pipeline for\\Procurement Document Validation}
+\end{center}
+\vspace*{3mm}
+\begin{center}
+\Large \textit{Jo\~{a}o Duarte Soares Gonçalves}
+\end{center}
+\vspace*{6mm}
+\begin{center}
+\large \textbf{Master's Dissertation} \\ \vspace*{2mm}
+Supervisor at FEUP: Prof.\ Pedro Amorim\\
+Supervisor at Hilti: Engineer Thibaut Taiclet\\
+\vspace*{10mm}
+\includegraphics[scale=0.45]{uporto-feup.pdf}
+
+\Large \textbf{Master in Industrial Engineering and Management}\\
+\vspace*{5mm}
+\large 2026
+\vspace*{5mm}
+\end{center}
+\end{framed}
+\newpage
+
+%-------------Preliminary------------%
+\StartPrelim
+\begin{singlespace}
+  \include{0_abstract}
+  \include{0_resumo}
+  \include{0_acknows}
+  \include{0_quote}
+  \cleardoublepage
+  \begin{spacing}{0.98}
+  \pdfbookmark[0]{Contents}{contents}
+  \tableofcontents
+  \end{spacing}
+  \include{0_abbrevs}
+  \cleardoublepage
+  \pdfbookmark[0]{List of Figures}{figures}
+  \listoffigures
+  \cleardoublepage
+  \pdfbookmark[0]{List of Tables}{tables}
+  \listoftables
+\end{singlespace}
+
+%-------------Chapters---------------%
+\StartBody
+\include{1_intro}
+\include{2_lreview}
+\include{3_methodology}
+\include{4_empirical_study}
+\include{5_results}
+\include{6_discussion}
+
+%------------Bibliography------------%
+\begin{singlespace}
+  \renewcommand{\bibname}{References}
+  \bibliographystyle{apalike}
+  \cleardoublepage%
+  \phantomsection%
+  \addcontentsline{toc}{chapter}{References}
+  \bibliography{7_bibliography}
+\end{singlespace}
+
+%---------Appendices-----------------%
+\begin{singlespace}
+\appendix
+\include{A_Appendix1}
+\include{A_Appendix2}
+\end{singlespace}
+
+\end{document}

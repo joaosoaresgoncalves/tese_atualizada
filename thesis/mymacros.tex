@@ -1,0 +1,42 @@
+%some macro definitions
+
+% format
+\newcommand{\class}[1]{{\normalfont\slshape #1\/}}
+
+% entities
+\newcommand{\Feup}{Faculdade de Engenharia da Universidade do Porto}
+
+\newcommand{\svg}{\class{SVG}}
+\newcommand{\scada}{\class{SCADA}}
+\newcommand{\scadadms}{\class{SCADA/DMS}}
+
+%til
+%{\raise.17ex\hbox{$\scriptstyle\sim$}}
+
+%piechart
+\newcommand{\slice}[4]{
+  \pgfmathparse{0.5*#1+0.5*#2}
+  \let\midangle\pgfmathresult
+
+  % slice
+  \draw[thick,fill=black!10] (0,0) -- (#1:1.0) arc (#1:#2:1.0) -- cycle;
+
+  % outer label
+  \node[label=\midangle:#4] at (\midangle:1) {};
+
+  % inner label
+  \pgfmathparse{min((#2-#1-10.0)/110.0*(-0.3),0)}
+  \let\temp\pgfmathresult
+  \pgfmathparse{max(\temp,-0.5) + 0.8}
+  \let\innerpos\pgfmathresult
+  \node at (\midangle:\innerpos) {#3};
+}
+
+
+
+\newcommand{\rowgroup}[1]{\hspace{-2em}#1}  % for indentation
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\newcommand\mc[1]{\multicolumn{1}{C}{#1}}
+%\sisetup{group-separator={,} , group-four-digits=true}
+
+\newcommand*\rfrac[2]{{}^{#1}\!/_{#2}}

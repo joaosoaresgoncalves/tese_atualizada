@@ -1,0 +1,276 @@
+%% =====================================================================
+%% Chapter 3: Methodology
+%% =====================================================================
+
+\chapter{Methodology} \label{chap:method}
+
+This chapter presents the methodological design adopted in this dissertation. The validation task is defined formally as a function that takes a purchase order and a shipping notice and returns a disposition, and is decomposed through a rule set whose structure follows from a taxonomy of failure modes. A separate section introduces the per supplier conditioning of the prompt with historical context. The enforcer pattern, the core methodological contribution, is then presented, followed by the disposition reduction rule and the ablation design that isolates the enforcer's effect by comparing 5 alternative pipeline designs. The evaluation instrument closes the chapter.
+
+
+%% -----------------------------------------------------------------
+\section{Research methodology framing}
+\label{sec:method:framing}
+
+The work reported in this dissertation follows the Design Science Research Methodology proposed by \citet{peffers2007dsrm}. This methodology organises a design research effort into 6 sequential activities, namely the identification of the problem and its motivation, the definition of the solution objectives, the design and development of the artefact, its demonstration on a representative case set, its evaluation against those objectives, and the communication of the results.
+
+In the classification of \citet{gregor2013dsr}, this dissertation sits in the improvement quadrant: a new solution to a known problem. Reconciling a purchase order with its shipping notice is well established in the supply chain literature; the proposed solution is a compound pipeline combining a language model with a rule level selective override enforcer. The evaluation compares this solution against alternative designs that share the same problem setting.
+
+
+%% -----------------------------------------------------------------
+\section{Formalisation of the validation task}
+\label{sec:method:formal}
+
+Let $P$ denote the set of purchase orders and $A$ the set of shipping notices emitted by a supplier. The validation task consists of a function
+%
+\begin{equation}\label{eq:f}
+  f \colon P \times A \to D,
+  \qquad
+  D = \{\textsc{pass},\; \textsc{review},\; \textsc{reject}\}
+\end{equation}
+%
+that assigns a disposition to every pair $(p, a) \in P \times A$: \textsc{pass} forwards the notice to invoicing without human intervention, \textsc{review} sends it to a procurement analyst first, and \textsc{reject} returns it to the supplier for correction.
+
+The function $f$ is not evaluated directly. It is decomposed through a finite set of validation rules $R = \{r_1, \ldots, r_n\}$, where each rule is itself a function
+%
+\begin{equation}\label{eq:rule}
+  r_i \colon P \times A \to V \times S,
+  \qquad
+  V = \{\text{ok},\; \text{fail}\},
+  \quad
+  S = \{\text{info},\; \text{warn},\; \text{crit}\}
+\end{equation}
+%
+that returns a verdict (ok or fail) and a severity (informational, warning, or critical); the disposition is obtained from the rule outputs by the reduction operator of Section~\ref{sec:method:disposition}.
+
+
+%% -----------------------------------------------------------------
+\section{Taxonomy of failure modes}
+\label{sec:method:taxonomy}
+
+The rule set $R$ is derived from a taxonomy of failure modes maintained in the company's internal documentation, which catalogues recurring discrepancies between purchase orders and shipping notices. Each failure mode is classified along 2 orthogonal dimensions: its \emph{category}, which captures the nature of the check required, and its \emph{severity}, which captures the operational cost of letting the failure propagate downstream.
+
+Three categories are distinguished:
+
+\begin{itemize}
+  \item \emph{Arithmetic failures} correspond to violations of closed form numerical relations, such as quantity matching, price tolerance or total reconciliation. These failures admit a deterministic check with a well defined tolerance.
+  \item \emph{Structural failures} correspond to violations of constraints on the document shape, such as text length limits, the presence of mandatory fields, or the uniqueness of notice identifiers. Most admit a check on the document alone; the uniqueness check is the exception, since it requires contextual information such as the set of previously processed identifiers.
+  \item \emph{Semantic failures} are inconsistencies that depend on the meaning of the content rather than on its form. They cannot be settled by a computation or a direct field comparison, and require interpretation, for example, a transport term that does not match the contract intent, an address written in a different format that may or may not refer to the same physical site, or an item description that does not coherently match the purchase order line. These failures require interpretation, a class of tasks on which large language models have been shown to perform competitively \citep{brown2020,bubeck2023}. They are therefore assigned to the language model regime in Section~\ref{sec:method:enforcer:regimes}.
+\end{itemize}
+
+A small number of rules straddle category boundaries. R04 (shipment date realism) is classified as arithmetic because it compares date fields, but its check involves judging whether the dates are logically coherent (e.g., a delivery date in the distant past may still be valid for a backorder), so it is assigned to the language model regime. The complete register, listing each rule's name, one line check and regime assignment, is given in Appendix~\ref{app:rules} (Table~\ref{tab:app:rules}).
+
+Three severity levels are distinguished. The level \emph{informational} conveys a side observation that does not change the disposition. The level \emph{warning} marks a violation that requires human review but does not, by itself, justify rejection. The level \emph{critical} marks a violation that forecloses acceptance of the notice. The assignment of each rule to a severity level reflects the operational experience of procurement personnel at the partner organisation. The mapping of these levels to the final disposition is stated in Section~\ref{sec:method:disposition}. The resulting structure of the taxonomy, every rule placed by category and severity, is summarised in Appendix~\ref{app:rules} (Table~\ref{tab:method:taxonomy}), alongside the full rule register.
+
+
+
+%% -----------------------------------------------------------------
+\section{Compound pipeline architecture}
+\label{sec:method:pipeline}
+
+The validation function $f$ is realised by a compound pipeline organised in 7 sequential stages. The term \emph{compound} is used in the sense of \citet{zaharia2025}, to denote an architecture in which a language model is combined with deterministic components and with explicit control flow, rather than acting as the sole decision maker.
+
+The 7 stages are: (1)~retrieving the purchase order, (2)~ingesting the shipping notice, (3)~normalising the notice, (4)~assembling the validation context, (5)~evaluating the rules, (6)~enforcing the output, and (7)~reducing the result to a disposition (Figure~\ref{fig:method:pipeline}). Stages~3 and~5 invoke the language model. The figure shows the stages as a logical sequence, with the enforcer in its default position at Stage~6; that position is itself a design choice. In the pre hoc design the deterministic checks run before Stage~5, so the language model never evaluates the rules they own, while in the in generation design they run during Stage~5. The 3 enforcer positions are set out in Section~\ref{sec:method:enforcer:realisations} and Figure~\ref{fig:method:realisations}.
+
+\begin{figure}[htbp]
+\centering
+\resizebox{\textwidth}{!}{\input{Figures/fig_pipeline}}
+\caption{Seven stage compound pipeline. Shaded blocks indicate stages that invoke the language model.}
+\label{fig:method:pipeline}
+\end{figure}
+
+
+
+%% -----------------------------------------------------------------
+\section{Constraints on the language model's use}
+\label{sec:method:constraints}
+
+The pipeline's primary model is the Azure OpenAI gpt-5.4-mini deployment, accessed through the chat completions interface and held fixed across all 5 designs, so that any difference between the designs is attributable to the enforcer and not to the model. To check that the findings are not specific to one model family, the buyer cohort is also run under a second model, Mistral-Large-3 on Azure AI Foundry, with the result reported in Chapter~\ref{chap:results}. A language model raises 2 difficulties that deterministic components do not: the decoder is probabilistic, so the same input can yield different outputs; and a well formed output is not guaranteed to match the structure the next stage expects. Two principles address these.
+
+\emph{Deterministic decoding.} The temperature is set to 0 and the seed fixed, so the decoder selects the highest probability token at each step. This does not make inference strictly deterministic, so every case is processed 5 times under each design and the reported verdict is the majority across the 5 runs; majority voting over repeated samples is a standard stabiliser for sampled decoders \citep{wang2023selfconsistency}. The rate at which the runs agree is reported in Chapter~\ref{chap:results} as a measure of reproducibility.
+
+\emph{Structured outputs.} The output shape is constrained by a schema that declares its fields, their types, and which are required, with the decoder forbidden from producing tokens that would violate it, which removes the need for defensive parsing downstream. Constrained decoding \citep{geng2025} is applied selectively: Stage~3 (ASN normalisation) uses it and gains structural reliability at no cost to reasoning, while Stage~5 (rule evaluation) does not, because format restricting constraints can degrade reasoning on multi step computation \citep{tam2024}. Structural validity of the Stage~5 output is instead recovered post hoc by the enforcer, applying the decoupling principle of \citet{wang2025slot}.
+
+These principles secure the form of the output, its reproducibility and shape, but not its content: a schema valid object from Stage~3 is not guaranteed to carry the values written in the cXML. The methodology assumes Stage~3 normalises the notice faithfully, which is reasonable because the input is machine generated, schema valid cXML rather than free text, and is performed under the deterministic decoding above. The assumption does not threaten the comparison either, since Stages~1 to~4 are shared by all 5 designs, so any normalisation error is constant across them and cancels; Stage~3 is validated empirically in Section~\ref{sec:results:normfidelity} (Table~\ref{tab:results:normfidelity}), which finds 99 per cent field-level fidelity against a deterministic parse. The released code, data, and run artefacts that let every figure and table in Chapter~\ref{chap:results} be regenerated are listed in Appendix~\ref{app:repro}.
+
+
+%% -----------------------------------------------------------------
+\section{Supplier conditioned prompting}
+\label{sec:method:supplier}
+
+Stage~4 assembles the validation context that Stage~5 evaluates, and the methodology adapts it to each supplier. The pipeline sees the same suppliers repeatedly and each tends to fail a different subset of the rules, so a supplier that has historically failed a particular rule is more likely to fail it again, a signal the language model has no access to from the cXML alone. The Stage~4 prompt therefore includes a short statement of the supplier's historical validation record before the language model is invoked. The conditioning is dynamic: a case is conditioned only on that supplier's earlier validated cases, so the prior grows as history accumulates and never draws on a future case. A supplier's first case therefore starts from an empty prior, a cold start.
+
+The construct draws on the retrieval augmented generation family of \citet{lewis2020rag}, instantiating 2 of its elements: a non parametric memory of prior cases held outside the model's weights, and a generator prompted, at inference time, on content drawn from that memory. The retrieval is a deterministic lookup on the supplier identifier, so the construct is referred to as supplier conditioned prompting rather than as retrieval augmented generation in full.
+
+Each profile records the dispositions previously assigned to the supplier's notices, the rules they most often failed, and a one sentence summary, and that summary is what the prompt receives. Two inclusion criteria apply: profiles are built only from buyer confirmed cases, never from the pipeline's own output, so the layer cannot learn from and amplify its own mistakes; and a supplier enters the corpus only with at least 2 buyer validated cases, so that leave-one-out evaluation can hold one out without leaving the prior empty. The supplier by supplier breakdown is given in Chapter~\ref{chap:empirical}.
+
+The conditioning's effect is isolated by an ablation with 3 arms: off; on, under a leave-one-out protocol; and a placebo that carries a different supplier's history under the same framing. A strict past-only variant, which conditions each case on the supplier's earlier cases alone, additionally checks that the leave-one-out result does not depend on look-ahead. The ablation looks only at the 14 rules in the language model regime and at the disposition, because the enforcer of Section~\ref{sec:method:enforcer} owns the 8 deterministic regime rules and overrides any verdict the conditioning could move on them; those are the only places where the prior can still register. The results are reported in Chapter~\ref{chap:results}.
+
+
+%% -----------------------------------------------------------------
+\section{Prompt engineering techniques}
+\label{sec:method:prompt}
+
+The evaluation stage relies on a language model to assess a structured payload against the rule set, and how the task is presented to the model affects the quality of that assessment. Four prompt engineering techniques are applied, each addressing a distinct source of error.
+
+\emph{Persona prompting} \citep{salewski2024} opens the system message with the role the model is to play, which narrows the priors it draws on and improves adherence to domain conventions and vocabulary.
+
+\emph{Task decomposition} \citep{khot2023,zhou2023} splits the task into sub tasks stated explicitly in the prompt. Here the validation is decomposed into 3: aligning the line items of the 2 documents, a rule by rule evaluation, and a semantic analysis of findings the rule set does not capture. Each sub task is narrower than the whole, which reduces the model's load and exposes the intermediate structure to the consuming stage.
+
+\emph{Few shot prompting} \citep{brown2020} appends a small number of worked examples that demonstrate the desired output format and the conventions for evaluating rules. It is especially effective when the output is structured, since the examples collapse variance in field naming and in explanation granularity.
+
+\emph{Chain of thought prompting} \citep{wei2022} instructs the model to state its intermediate calculations before committing to a verdict. It is applied to R01, R02 and R15, the rules needing tolerance band arithmetic on quantities, unit prices and line totals, where it reduces single step arithmetic errors. It is deliberately not applied to the semantic sub task, because explanations can be unfaithful when the model has no clean verification procedure \citep{turpin2023}.
+
+Examples of each technique as applied in the Stage~5 prompt are reproduced in Appendix~\ref{app:prompt} (Table~\ref{tab:app:prompt}).
+
+
+%% -----------------------------------------------------------------
+\section{The enforcer pattern}
+\label{sec:method:enforcer}
+
+The methodological contribution of this dissertation is a design pattern for combining language model evaluation with deterministic verification on a rule by rule basis. The pattern addresses 2 limitations of an unconstrained language model evaluator. The first is that language models are empirically unreliable on closed form arithmetic \citep{arkoudas2023,dziri2024}, whereas a deterministic check provides a reproducible answer. The second is that when a language model sees a contradiction in its input, for example, 2 fields that should match but do not, it tends to produce a smoothed over answer rather than report the conflict \citep{huang2024hallucination}.
+
+In plain terms, the enforcer pattern is built around 2 design decisions, both fixed at design time: which rules are evaluated deterministically rather than by the language model, and when the deterministic check runs relative to the language model: before, during, or after. The remainder of this section formalises this idea, names the 2 regimes (rule ownership), and characterises the 3 realisations (timing).
+
+\subsection{Definition}
+\label{sec:method:enforcer:def}
+
+For each rule $r_i$ in the rule set $R = \{r_1, \ldots, r_n\}$, the enforcer produces a final verdict and severity $(v_i, s_i)$ by applying a rule specific function $\varphi_i$. The enforcer is a deterministic Stage~6 component; the language model is invoked only inside Stages~3 and~5. The output of the enforcer is the indexed collection
+%
+\begin{equation}\label{eq:enforcer}
+  E(R) = \{(r_i, v_i, s_i)\}_{i=1}^{n}
+\end{equation}
+%
+of (rule, verdict, severity) triples, one for each of the $n$~rules in $R$, used as input to the disposition reduction in Section~\ref{sec:method:disposition}.
+
+The function has 2 degrees of freedom. The first is \emph{rule ownership}: for rules in the language model regime, $\varphi_i$ accepts the language model's verdict unchanged; for rules in the deterministic regime, $\varphi_i$ is a procedure implemented in code (Section~\ref{sec:method:enforcer:regimes}). The second is \emph{realisation}: the deterministic check may run before, during, or after the language model's evaluation, and the input to $\varphi_i$ follows from this choice (Section~\ref{sec:method:enforcer:realisations}).
+
+To illustrate, suppose the language model emits $(\text{ok},\; \text{info})$ for some rule $r_i$. If $r_i$ belongs to the language model regime, the enforcer leaves the triple unchanged as $(r_i,\; \text{ok},\; \text{info})$. If $r_i$ belongs to the deterministic regime and the deterministic check finds a violation, the enforcer returns $(r_i,\; \text{fail},\; \text{crit})$, overriding the language model's verdict.
+
+\subsection{Two regimes (rule ownership)}
+\label{sec:method:enforcer:regimes}
+
+Two regimes are used. In the \emph{language model regime}, $\varphi_i$ is the identity function and the language model's verdict is accepted unchanged. In the \emph{deterministic regime}, $\varphi_i$ is the result of a deterministic check implemented in code, whether that procedure runs before, during, or after the language model.
+
+Rules are assigned by category and by one further test: a rule joins the deterministic regime only if its check reduces to a closed form computation on fields the pipeline already has. Semantic rules cannot meet this test by definition and always sit in the language model regime. Most arithmetic and structural rules can, but not all: R05 (unit of measure equivalence) and R20 (weight plausibility), for example, need their inputs interpreted before the check can run, so they stay in the language model regime. Eight rules pass the test (R01, R02, R03, R06, R15, R16, R18, and R19) and form the deterministic regime; the other 14 are evaluated by the language model.
+
+\subsection{Three realisations (when the deterministic check is applied)}
+\label{sec:method:enforcer:realisations}
+
+The deterministic regime admits 3 realisations of $\varphi_i$, differing only in when the deterministic check runs relative to the language model.
+
+The first is \emph{post hoc}. The language model emits a verdict $(\hat{v}_i, \hat{s}_i)$ at Stage~5 for every rule. At Stage~6, each deterministic regime rule is recomputed in code, and $\varphi_i$ takes the language model's prior verdict as input:
+%
+\begin{equation}\label{eq:posthoc}
+  (v_i, s_i) = \varphi_i(\hat{v}_i, \hat{s}_i)
+\end{equation}
+
+The second is \emph{in generation}. The deterministic check is exposed through tool calling, a provider side mechanism by which the language model emits a structured call to an external function and receives its return value as additional context before continuing to generate. The language model invokes the tool at Stage~5 before committing to a verdict, and $\varphi_i$ takes the document pair $(p, a)$ directly:
+%
+\begin{equation}\label{eq:ingen}
+  (v_i, s_i) = \varphi_i(p, a)
+\end{equation}
+%
+for each rule $r_i$ in the deterministic regime. The 7 callable tools used in this realisation are enumerated in Appendix~\ref{app:rules} (Table~\ref{tab:method:tools}). One rule, R18 (duplicate detection), cannot be exposed as a tool in this realisation: deciding whether a notice is a duplicate needs memory of earlier notices, which a single stateless tool call does not have, so in Mode~D R18 is settled by a post hoc check instead. R18 is also tested on its own, by submitting the same notice twice together with a fresh one as a control and checking that only the repeat is flagged; the result is reported in Chapter~\ref{chap:results}.
+
+The third is \emph{pre hoc}. The deterministic check runs before the language model is invoked, and its verdicts on the deterministic regime rules are written into the language model's input context. The language model is asked only about the rules in the language model regime and never produces a verdict on the deterministic regime rules. Equation~\eqref{eq:ingen} holds here, with $\varphi_i$ computed before the language model rather than during it.
+
+The 3 realisations encode the same $\varphi_i$ and form a gradient of enforcement strength. In generation enforces the constraint softly: the language model decides how to use the tool result. Post hoc enforces it strictly: the language model's verdict on the deterministic regime rules is replaced at Stage~6. Pre hoc enforces it most strictly: the language model never produces a verdict on the deterministic regime rules and so cannot contradict them. This gradient, soft, strict, strictest, is the methodological pivot of Section~\ref{sec:method:ablation}. Only the 2 strict positions hold deterministic authority over the verdict; the soft in generation realisation is established tool use \citep{schick2024,goodell2025} that leaves the final verdict to the model, and it enters the comparison as the prior art control that isolates the effect of that authority. Figure~\ref{fig:method:realisations} summarises the 3 realisations and their temporal relationship to the language model.
+
+\begin{figure}[htbp]
+\centering
+\input{Figures/fig_realisations}
+\caption{Three realisations of the enforcer pattern, by when the deterministic check $\varphi_i$ runs relative to the language model: before (pre hoc), during (in generation), or after (post hoc).}
+\label{fig:method:realisations}
+\end{figure}
+
+\subsection{Auxiliary operations: rule injection and severity capping}
+\label{sec:method:enforcer:aux}
+
+The enforcer also performs 2 operations that lie outside the override function definition. The first is \emph{rule injection}: if the language model omits a rule's verdict, the enforcer inserts one, which is recomputed deterministically for rules in the deterministic regime, or set to a default with a diagnostic note for rules in the language model regime. The second is \emph{severity capping}: each rule has a defined severity in the rule register (Appendix~\ref{app:rules}, Table~\ref{tab:app:rules}); if the language model assigns a severity that differs from the rule's registered value, the enforcer clamps it to the registered value. Both operations are expressed as structured actions and are written into the run artefact.
+
+Both operations apply in every realisation of the enforcer pattern (post hoc, in generation, pre hoc). In the pre hoc realisation, both operate only on the language model regime, since the deterministic regime verdicts were finalised at Stage~5.
+
+Every modification the enforcer makes to a triple is recorded in the run artefact as one of 3 logged action types: the override of Section~\ref{sec:method:enforcer:def} and the 2 auxiliary operations introduced above. They are listed in Appendix~\ref{app:rules} (Table~\ref{tab:method:actions}). Two rules have severities that are themselves conditional. R16 (partial shipment handling) is registered as informational but its deterministic check escalates it to warning when R01 detects an under shipment against the purchase order baseline. R06 (line item completeness) is registered as critical but its check grades the missing lines as warning when they trace to a declared partial delivery. Both are part of each rule's own logic, not generic enforcer operations, so neither is a separate action type.
+
+The enforcer pattern has 3 parts: a rule ownership assignment, a family of rule specific override functions with 3 realisations, and a small set of auxiliary operations. Whichever realisation is used, the enforcer's output has the same shape, one (rule, verdict, severity) triple per rule plus an action log, so the rest of the pipeline does not depend on which realisation produced the verdict.
+
+
+%% -----------------------------------------------------------------
+\section{Disposition reduction}
+\label{sec:method:disposition}
+
+The final stage reduces the enforcer's output $E(R)$ of Equation~\eqref{eq:enforcer} to a single disposition by applying a deterministic rule. Let $c$ be the number of failed rules with critical severity, and $w$ the number with warning severity. The disposition is defined by
+%
+\begin{equation}\label{eq:disposition}
+  \text{disp}(E(R)) =
+  \begin{cases}
+    \textsc{reject} & \text{if } c \geq 1, \\
+    \textsc{review} & \text{if } c = 0 \;\wedge\; w \geq 1, \\
+    \textsc{pass}   & \text{if } c = 0 \;\wedge\; w = 0.
+  \end{cases}
+\end{equation}
+
+The policy is deliberately conservative: one critical failure forces rejection and one warning forces review, because a false acceptance costs far more than a false review. Informational findings do not enter the reduction.
+
+
+%% -----------------------------------------------------------------
+\section{Ablation design}
+\label{sec:method:ablation}
+
+To isolate the contribution of the enforcer, the pipeline is evaluated under 5 alternative designs. The designs vary the role of the deterministic regime: whether it is used, where in the pipeline it is applied, and whether it is replaced by a neural auditor. The set of designs is given in Table~\ref{tab:method:ablation}.
+
+\begin{table}[htbp]
+\centering
+\caption{Ablation design.}
+\label{tab:method:ablation}
+\footnotesize
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{@{}cp{3.8cm}p{3.8cm}p{3.6cm}p{2.2cm}@{}}
+\toprule
+\textbf{Mode} & \textbf{Stage~5} & \textbf{Stage~6} & \textbf{Det.\ rules} & \textbf{Role} \\
+\midrule
+A: none          & LLM, all rules                                    & Pass through                              & ---                                          & Baseline              \\[6pt]
+B: post hoc      & LLM, all rules                                    & Deterministic check on the 8~owned rules  & R01, R02, R03, R06, R15, R16, R18, R19       & Post hoc override     \\[6pt]
+C: LLM-as-judge  & LLM, all rules                                    & Second LLM auditor, all rules             & ---                                          & LLM-as-judge          \\[6pt]
+D: in generation & LLM with the 7~tools of Table~\ref{tab:method:tools}, all rules & Pass-through, with R18 fallback  & R01, R02, R03, R06, R15, R16, R19; R18       & In generation tool use \\[6pt]
+E: pre hoc       & Det.\ check on 8~owned rules; LLM on remaining~14 & Merge; severity capping and injection on LM-regime verdicts & R01, R02, R03, R06, R15, R16, R18, R19 & Pre hoc split \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+The 5 designs, labelled Mode~A to Mode~E, are the 3 realisations of the enforcer pattern (post hoc, in generation, pre hoc) and 2 designs outside it. Mode~A is an unprocessed baseline: the language model evaluates every rule and nothing post-processes it, which isolates the evaluation stage on its own. Mode~C (LLM-as-judge) replaces the deterministic check with a language model call at Stage~6, testing whether a neural auditor can stand in for a deterministic one. Mode~B overrides the model's verdicts afterwards (post hoc), Mode~D exposes the checks as tools the model calls during generation (in generation), and Mode~E runs them first and asks the model only about the remaining 14 rules (pre hoc). R18, which needs cross-document state,  is always settled by the deterministic side.
+
+The designs serve 2 comparisons. The full 5 way comparison answers RQ.1, on how the designs compare on per rule accuracy, disposition, cost and latency. The 3 way contrast among B, D and E answers RQ.2 by isolating the enforcer's position while holding rule scope and logic fixed; Mode~A bounds the comparison from below, and Mode~C contributes to RQ.1 only. RQ.3 is answered separately, by the supplier conditioning ablation below, which is orthogonal to the 5 designs.
+
+That ablation is the one defined in Section~\ref{sec:method:supplier}. Comparing off with on shows whether the prior helps; comparing on with placebo shows whether any gain comes from the specific history or merely from an authoritative looking sentence. The effect is clearest in Mode~A, where no enforcer override can mask it, and the results are reported with the 5-design comparison in Chapter~\ref{chap:results}.
+
+
+%% -----------------------------------------------------------------
+\section{Evaluation instrument}
+\label{sec:method:eval}
+
+The evaluation compares the pipeline's output against a reference produced by a human expert. Four outcomes are measured, matching the 4 targets of RQ.1 and RQ.2: agreement on the document level disposition, accuracy on each individual rule, cost, and latency.
+
+For the document level disposition, the primary metric is Cohen's quadratically weighted kappa \citep{cohen1968kappa}. The disposition has 3 ordered values (\textsc{pass}, \textsc{review}, \textsc{reject}), and the quadratic weighting penalises a far disagreement more than a near one, so a pass to reject error weighs 4 times a pass to review or review to reject error. The coefficient is 1 at perfect agreement and 0 at chance; its definition is given in Appendix~\ref{app:metrics}.
+
+Cohen's kappa can drop sharply when one disposition value dominates the dataset, even when agreement is in fact high \citep{cicchetti1990}. The evaluation therefore also reports Gwet's AC2 \citep{gwet2008}, which has the same chance corrected form but a chance agreement term less sensitive to category imbalance. The 2 are reported side by side, and a divergence between them signals that prevalence is distorting the kappa. A $3 \times 3$ confusion matrix per design shows the structure of the agreement, since 2 designs with the same $\kappa_w$ can have very different error patterns.
+
+For per rule accuracy, each rule's pipeline verdict is compared against the expert's verdict for the same rule on the same document, with precision and recall reported per rule treating \emph{fail} as the positive class. These are summarised by a severity weighted macro F1, which weights each rule's F1 by its registered severity (1~informational, 2~warning, 3~critical) so that higher consequence rules count for more; its definition is in Appendix~\ref{app:metrics}.
+
+Cost is reported as the average number of input and output tokens consumed per document, with the conversion to currency given in Chapter~\ref{chap:results}. Latency is reported as the average wall clock time per document, in seconds. Both are reported as means with standard deviations, computed across the 5 repeated runs defined in Section~\ref{sec:method:constraints}.
+
+
+When the 5 designs are compared in Chapter~\ref{chap:results}, each point estimate is read together with its confidence interval. The bootstrap intervals are 95\% percentile intervals from 2,000 resamples, used because the samples are small. For the same reason the comparison is primarily descriptive: most differences are judged on their direction and size, their confidence intervals, and how stable the verdicts are across repeated runs, rather than on significance alone. Where a contrast is large enough to be statistically reliable, it is reported as such.
+
+Three paired tests support this reading. Each pair of designs is compared with an exact McNemar test \citep{dietterich1998approximate} on whether each case is right or wrong, the exact form being used because the counts are too small for the usual approximation; a Holm correction \citep{holm1979simple} is applied across each family of comparisons; and Cohen's h \citep{cohen1988statistical} gives a rough effect size. The tests are supporting evidence, not pass/fail decisions: a non-significant result is reported as such, and effect sizes with intervals are preferred over significance stars \citep{berrar2017confidence}. Both the bootstrap and the McNemar test assume the cases are independent, which holds only partly on the buyer sample, a point Chapter~\ref{chap:results} returns to.
+
+The supplier conditioning ablation is read on the same instrument. Within each mode, its off, on, and placebo settings are compared on the disposition agreement coefficients ($\kappa_w$ and AC2) and on a severity weighted macro F1 limited to the 14 language model regime rules, the only rules the prior can move. Changes in disposition are also reported as a paired flip count against the no-conditioning baseline, each flip marked as moving towards or away from the buyer ground truth. Given the small buyer sample, these differences are read through the point estimates, the confidence intervals, and the flip table rather than significance tests, and a difference of zero is reported as such.
+
+
+%% -----------------------------------------------------------------
+\section{Chapter conclusion}
+
+This chapter set out the methodology. The work is framed as design science research in the improvement quadrant. The validation task is formalised as a function from a purchase order and a shipping notice to a disposition, decomposed through a rule set organised by a taxonomy of failure modes, and realised by a 7 stage pipeline, 2 stages of which call a language model. Two principles govern that model, deterministic decoding and structured outputs, and 4 prompt engineering techniques shape the evaluation prompt. The Stage~4 prompt is conditioned on a short, dynamic record of the supplier's prior validations, a lightweight form of retrieval augmented generation.
+
+The core contribution is the enforcer pattern: a rule level scheme that assigns each rule to the language model regime or the deterministic regime, with 3 realisations (post hoc, in generation, pre hoc) that share the same rule ownership and differ only in when the deterministic check runs. Its effect is isolated by an ablation of 5 designs, 3 that instantiate the pattern and 2 outside it, and the supplier conditioning by a second, orthogonal ablation. Disposition agreement (weighted kappa and Gwet's AC2), severity weighted per rule F1, cost and latency are the measures, read descriptively with bootstrap confidence intervals. The next chapter applies this methodology.

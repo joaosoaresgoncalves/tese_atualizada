@@ -1,0 +1,262 @@
+%% =====================================================================
+%%  2_lreview.tex  --- Chapter 2: Literature Review
+%% =====================================================================
+
+\chapter{Literature Review} \label{chap:lreview}
+
+This chapter is organised in 2 parts. The first establishes the background context: the theoretical and technological foundations on which the present work builds.  The second surveys the state of the art: the existing studies and pipelines that pursue goals similar to those of the present work. The chapter closes with a synthesis of the knowledge gaps, the envisioned contributions, and the research questions that guide the dissertation.
+
+
+%% -----------------------------------------------------------------
+\section{Background context}
+\label{sec:lr:background}
+
+This section establishes the foundations on which the present work is based. It opens with artificial intelligence in supply chain management and procurement, the position of document validation within it, and retrieval augmented generation. It then covers large language models for document processing, including prompt engineering, structured outputs, multi-rule scaling and hallucination, followed by hybrid architectures that combine LLM reasoning with deterministic verification. It closes with selective automation and human-in-the-loop review, compound AI systems and enterprise deployment, and evaluation methodologies for language model pipelines.
+
+
+%% -----------------------------------------------------------------
+\subsection{Artificial intelligence in supply chain and procurement}
+\label{sec:lr:ai-scm}
+
+Artificial intelligence has attracted sustained interest across supply chain management (SCM), with applications spanning demand forecasting, inventory optimisation, supplier selection, logistics routing, and quality control. Document validation is positioned within this broader landscape as part of the operational layer of procurement. However, ASN-to-PO validation demands both semantic understanding, for interpreting supplier specific field naming and address variations, and precise numerical verification, for quantity matching and price extensions. The technologies that address each side of this combination are reviewed in the sections that follow.
+
+
+%% -----------------------------------------------------------------
+\subsection{Retrieval augmented generation}
+\label{sec:lr:rag}
+
+Retrieval Augmented Generation (RAG) was introduced by \citet{lewis2020rag}: instead of relying only on what the model memorised in training, the prompt is conditioned on external evidence retrieved at inference time. The framework has since evolved from naive to advanced and modular variants \citep{gao2024rag, sharma2025}, with retrieval itself ranging from sparse \citep{robertson2009} and dense \citep{karpukhin2020} to hybrids of the two \citep{cormack2009}, and with adaptive extensions such as SELF-RAG \citep{asai2024} and Corrective RAG \citep{yan2024}.
+
+Enterprise RAG differs from web-scale RAG in 3 ways that matter here: smaller domain-specific corpora, structured documents, and zero tolerance for inaccuracy \citep{karakurt2026}. In procurement the costliest failure modes are chunking and extraction errors, since a missed line item or a misaligned price can each flip a validation outcome \citep{barnett2024}.
+
+
+
+%% -----------------------------------------------------------------
+\subsection{Large language models for document processing and validation}
+\label{sec:lr:llm}
+
+\subsubsection{From task specific models to LLM based document intelligence}
+
+Document intelligence research has shifted from task specific models requiring labelled training data to LLMs that perform extraction, classification, and validation through prompting alone \citep{li2024gie,ke2025}. This shift is the relevant one for structured B2B procurement documents, which arrive as machine readable cXML or EDI and need no OCR or layout analysis. The same survey by \citet{li2024gie} nonetheless reports that few-shot and zero-shot LLM methods still lag behind supervised fine-tuned models on generative information extraction, a gap that directly motivates the hybrid architecture adopted in this thesis.
+
+\subsubsection{Prompt engineering for structured validation}
+
+Prompt engineering has matured from informal heuristics into a design discipline in which the choice of technique materially affects performance \citep{schulhoff2024, sahoo2024}. Four techniques are used in this work. Chain-of-thought prompting \citep{wei2022} elicits intermediate reasoning steps and improves performance on arithmetic, commonsense and symbolic tasks. Assigning an expert persona improves domain specific performance \citep{salewski2024}, which motivates the ``expert procurement validation agent'' persona adopted here. Few-shot prompting \citep{brown2020} supplies a small set of exemplars that mainly communicate the expected output format \citep{min2022}. Decomposed prompting \citep{khot2023}, which breaks a complex task into sub-problems, improves both accuracy and interpretability and is directly reflected in the pipeline's stage decomposition.
+
+\subsubsection{Structured output generation and constrained decoding}
+
+Producing machine parseable validation results requires structured output generation. Constrained decoding enforces a schema during generation, and a benchmark across 6 frameworks shows it also improves downstream task accuracy slightly \citep{geng2025}. It carries a documented trade-off, however: strict format constraints can degrade reasoning, with gaps of up to 38\% on reasoning benchmarks under JSON-mode generation, while classification tasks are largely unaffected \citep{tam2024}. \citet{wang2025slot} resolve the tension with SLOT, which decouples the reasoning from the formatting: the model reasons freely and the structure is applied afterwards, the principle this thesis applies by letting the enforcer recover structural validity post hoc.
+
+\subsubsection{Prompt complexity and multi-rule scaling limits}
+\label{sec:lr:density}
+
+A critical question for pipelines that encode many validation rules into a single LLM prompt is whether per rule performance degrades as the number of rules grows. \citet{jaroslawicz2025} introduced IFScale, a benchmark that scales instruction density from 10 to 500 keyword inclusion constraints, and evaluated 20 models across 7 providers. They identified 3 degradation patterns: threshold decay, where reasoning models such as o3 and Gemini 2.5 Pro maintain near perfect accuracy through 100--150 instructions before declining sharply; linear decay, where gpt-4.1 and Claude 3.7 Sonnet exhibit a steady decline across the density spectrum; and exponential decay, where gpt-4o drops rapidly after minimal densities. Even the best frontier models achieved only 68\% accuracy at 500 instructions, and the study also documented a universal primacy bias: models preferentially satisfy earlier instructions over later ones, with direct implications for prompt ordering. The pipeline proposed in this thesis embeds 22 rules in a single prompt, a density at which the results of \citet{jaroslawicz2025} suggest degradation is already measurable for non reasoning models, though still manageable. They are consistent with the earlier comparison of \citet{gozzi2024}, who examined single task and multitask prompting across multiple models and found that the optimal decomposition of rules across LLM calls is highly contingent on architecture and training data.
+
+\subsubsection{Hallucination and arithmetic errors}
+\label{sec:lr:hallucination}
+
+LLMs are unreliable on tasks that require precise numerical verification, because a model generates the most probable response to a prompt, not necessarily the correct one \citep{feuerriegel2024}. For document validation, where each field carries financial or contractual weight, that distinction is operational rather than stylistic.
+
+\citet{huang2024hallucination} separate factuality hallucination, contradicting real world facts, from faithfulness hallucination, diverging from the provided input. An ASN validator needs no world knowledge, so what matters is the faithful extraction and comparison of values already on the page \citep{ji2023}. Retrieval mainly mitigates the factuality side, not faithful computation from values already in context, which is what motivates post hoc deterministic verification.
+
+Arithmetic is the concrete case of this faithfulness gap: transformers have fundamental limits in composing elementary operations, with accuracy falling as the number of steps grows \citep{dziri2024}, and GPT-4 fails on multi-step arithmetic, behaving as pattern matching rather than grounded computation \citep{arkoudas2023}. Two mitigations exist, each limited. Reasoning optimised models improve on mathematical tasks but at higher latency and cost \citep{li2025reasoning}; tool augmentation delegates arithmetic to external solvers and is accurate \citep{lyu2023,schick2024} but needs every check to be a discrete tool call, awkward for the mixed semantic and numerical reasoning document validation requires. Neither removes the need for a verification layer over the model's complete output, and deployed supply chain systems already show these failures in planning and logistics \citep{bahroun2026}, which motivates the hybrid architectures of the next section.
+
+
+%% -----------------------------------------------------------------
+\subsection{Foundations of hybrid architectures: LLM reasoning with deterministic verification}
+\label{sec:lr:hybrid}
+
+The limitations documented in the previous section, namely \citet{arkoudas2023} on GPT-4's failures in multi-step arithmetic, \citet{dziri2024} on the theoretical bounds of compositional reasoning in transformers, and \citet{ji2023} and \citet{huang2024hallucination} on the inherent nature of hallucination, have driven a convergence toward hybrid architectures that combine LLM semantic reasoning with deterministic post-processing. This section introduces the principal design patterns underpinning such architectures: neuro-symbolic foundations, in generation tool use, guardrails and post hoc verification (the enforcer pattern), and the error propagation considerations specific to multi-stage LLM pipelines.
+
+\subsubsection{Neuro-symbolic foundations}
+
+The broader intellectual tradition of combining neural and symbolic reasoning provides the theoretical grounding for hybrid validation \citep{gorenshtein2026neurosymbolic, yang2025neurosymbolic}. The core architectural pattern, in which an LLM extraction or reasoning stage is followed by rule-based verification, positions hybrid architectures not as a compromise but as superior to pure neural approaches for tasks requiring both flexibility and correctness \citep{prenosil2025, xu2025, bayless2025}. Coupling a deterministic theorem generator that constructs provably sound, minimal contradiction sets with an LLM layer that verbalises proofs into human-readable explanations, for instance, achieves what \citet{xu2025} term ``explainability by construction.'' Specific instantiations of this paradigm in medical reporting, formal-specification, and reasoning systems are revisited as state-of-the-art precursors in Section~\ref{sec:lr:sota:hybrid}.
+
+\subsubsection{In generation tool use}
+
+In in-generation tool, the model emits a function call during generation, the function executes, and the result re-enters its context. It was established by program-aided language models, which delegate arithmetic to a Python interpreter \citep{gao2022pal,chen2022pal}, generalised by Toolformer \citep{schick2024}, and given formal faithfulness guarantees by \citet{lyu2023}.
+
+Two limits bound the approach. Each check must be a self-contained function, so rules that need history, such as detecting a duplicate shipping notice, cannot be expressed this way. And when a task mixes arithmetic with judgement, the model must keep deciding whether to call a tool, which LLMs do unreliably \citep{trevino2025,yang2024tools}. Consistent with this, \citet{stechly2024} find that an external sound verifier outperforms model self-critique, which supports verifying after generation rather than during it.
+
+\subsubsection{Guardrails, post hoc verification, and the enforcer pattern}
+
+Applying deterministic verification after LLM generation, rather than trying to prevent errors during it, has crystallised into a distinct design pattern. \citet{rebedea2023} introduced NeMo Guardrails, where policies in the Colang DSL intercept and validate LLM inputs and outputs. Reviewing hallucination mitigation techniques, \citet{joshi2025} found that post-processing verification consistently outperforms prompting or fine-tuning alone, and \citet{pesaranghader2026} argued that detection should be the operational entry point for hallucination management.
+
+The present thesis proposes the enforcer pattern as a reusable component for LLM-based document validation. It differs from guardrails in scope: where guardrails act as binary gates that block or permit an output, the enforcer performs field level verification and selectively overrides only the rules where deterministic computation disagrees with the LLM, preserving the model's semantic reasoning while correcting its arithmetic (such as quantity matching or price extensions). It also differs from tool augmented LLMs \citep{schick2024}, which verify during generation: the enforcer verifies after generation, so it can assess the model's complete output as a whole. The deeper distinction is one of authority. In generation tool use is an established technique \citep{schick2024,goodell2025}, but the model still owns the final verdict and may use or ignore the tool result, where the enforcer holds authority over the rules it owns. The genuinely new element this thesis contributes is therefore that authority, realised by applying the deterministic check after generation (post hoc) or before it (pre hoc); the in generation realisation is included as the established tool use baseline, the control that isolates the effect of deterministic authority from the mere availability of the deterministic computation.
+
+\subsubsection{Error propagation in multi-stage LLM pipelines}
+
+Multi-stage LLM pipelines add a failure mode that single-call approaches avoid: errors propagate across stages. Studies of multi-agent and pipeline systems report that errors accumulate across stages and that task verification failures, where superficial checks pass despite underlying errors, are common \citep{ke2025,cemri2025,reid2025,zhang2025ocr}. The deterministic enforcer addresses this by providing an independent verification pathway: even if the model's parsing and validation stages agree on a wrong result, the enforcer can catch it by recomputing from the source data.
+
+
+%% -----------------------------------------------------------------
+\subsection{Selective automation and human-in-the-loop review}
+\label{sec:lr:selective}
+
+ \citet{mao2025} documented that LLMs are frequently poorly calibrated, expressing high confidence even when their outputs are incorrect, which makes raw model probabilities unreliable as routing signals without additional calibration techniques that remain an active research area. For this reason, the pipeline proposed in this thesis implements its REVIEW category through a rule-based disposition framework: the enforcer routes cases to REVIEW when specific deterministic triggers fire (partial shipments, enforcer overrides of LLM outputs, or unmatched line items) rather than relying on LLM reported confidence. The empirical viability of rule based selective automation at enterprise scale, as evidenced by production accounts payable systems, is examined in Section~\ref{sec:lr:sota:hybrid}.
+
+
+%% -----------------------------------------------------------------
+\subsection{Compound AI systems and enterprise deployment}
+\label{sec:lr:compound}
+
+\subsubsection{Pipeline decomposition as a design discipline}
+
+\citet{zaharia2025} proposed a blueprint for enterprise compound AI systems that stresses fitting into an organisation's existing compute and data infrastructure rather than replacing it. That requirement is directly relevant here, since the pipeline must interface with the partner's SAP Ariba and S/4HANA systems. \citet{chen2025compound} describe modern LLM applications as modular architectures that pair an LLM with specialised external components, each handling one sub-task and replaceable on its own. For document validation, this modular view means the retrieval, the parsing LLM, the validation LLM, and the enforcer can each be upgraded, tested, and evaluated independently.
+
+\citet{lee2025} catalogued techniques for optimising compound AI systems, including prompt optimisation, component selection, and end-to-end tuning, from textual gradient methods such as TextGrad to numerical signal methods such as DSPy's bootstrap sampling, and confirmed that optimising compound systems is fundamentally different from optimising individual models because interactions between components create emergent behaviours that cannot be predicted from component level performance.
+
+\subsubsection{Auditability, regulation, and trust}
+
+Enterprise deployment adds requirements absent from academic benchmarking: auditability, compliance and trust. Regulators note that opaque AI results ``cannot be understood, explained or reproduced'' \citep{perezcruz2025,finma2024}, and the European Union's AI Act \citep{euaiact2024} places systems that make financial decisions in a high-risk category that requires documentation, human oversight and audit trails. The artefact answers this with interpretability at 3 levels \citep{ramachandram2025}: the model explains each finding, the enforcer records its override rationale, and the pipeline produces an audit trail linking inputs to outputs.
+
+
+%% -----------------------------------------------------------------
+\subsection{Evaluation of LLM outputs and AI pipelines}
+\label{sec:lr:eval}
+
+\subsubsection{Task-based metrics, human evaluation, and LLM-as-Judge}
+
+\citet{chang2024}, in the most comprehensive survey on LLM evaluation to date, organised assessment across 3 dimensions: what to evaluate (task performance, reasoning, ethics), where to evaluate (benchmarks, real world tasks), and how to evaluate (automatic metrics, human judgment, model based assessment), and confirmed that task based evaluation through precision, recall, and F1 remains the gold standard for application specific systems. \citet{rudd2025} emphasised that evaluation must be embedded in continuous integration and deployment pipelines rather than treated as a one-time assessment, a principle directly applicable to validation pipelines that must maintain accuracy as models, prompts, and supplier patterns evolve.
+
+The LLM-as-Judge paradigm uses language models to evaluate other LLM outputs, replacing or supplementing human evaluation. \citet{zheng2023} demonstrated that GPT-4 achieves greater than 80\% agreement with human evaluators in pairwise comparison, comparable to inter-annotator agreement among humans, and identified position bias and verbosity bias as key limitations mitigable through randomised ordering and calibrated rubrics. \citet{liu2023geval} introduced G-Eval, achieving better human correlation than BLEU, ROUGE, and BERTScore, while \citet{kim2024} demonstrated that smaller open-source models (13B)
+fine-tuned as evaluators (Prometheus) achieve comparable quality to
+GPT-4 at substantially lower cost. For document validation, this paradigm serves a meta-evaluation role in which a separate model assesses whether the primary validation LLM's judgments are internally consistent and well grounded in evidence, which is analogous to a second opinion.
+
+\subsubsection{Constructing evaluation data: mutation and behavioural testing}
+\label{sec:lr:eval:mutation}
+
+Three converging literatures frame the construction of evaluation data for
+structured validation pipelines of the type proposed here. Mutation testing in software engineering injects a known fault into a real artefact so that the
+expected outcome is known by construction from the
+unmutated original~\citep{jiaharman2011,papadakis2019}; \citet{andrews2005} established
+that mutation induced faults are representative of real faults, and
+the systematic review by \citet{ghiduk2017} catalogues the higher order mutation testing literature,
+including the interaction and masking effects that arise when multiple faults are present
+simultaneously. CheckList~\citep{ribeiro2020} applies the same idea to NLP models, building small tests that each isolate a single behaviour, the direct parallel to measuring recall one mutation per rule. Metamorphic testing~\citep{segura2016} completes the set: a controlled change to the input, with a known effect on the output, supplies ground truth without separate annotation.
+
+The consequence for this work is clear. Deterministically mutating real, clean ASNs is the right way to evaluate the pipeline rule by rule without an external oracle: real seeds keep the documents schema valid and realistic, changing one thing at a time pins each rule's effect cleanly, and the expected disposition follows by construction. Generating the test cases with a language model would carry the opposite risks: the distribution drifts and rare cases are lost under repeated generation~\citep{shumailov2024}, the generator's own errors need further checking~\citep{nadas2025}, and the data generator becomes circularly entangled with the LLM-based system it is meant to test.
+
+
+%% -----------------------------------------------------------------
+\section{State of the art}
+\label{sec:lr:sota}
+
+This section turns from the foundations to the empirical landscape: the studies and pipelines that have already pursued goals close to this thesis. It first locates document validation within AI for supply chain management and procurement, then examines the closest hybrid LLM and deterministic validation precursors, reviews the evaluation benchmarks proposed for related settings, and closes with the knowledge gaps, the envisaged contributions, and the research questions.
+
+
+%% -----------------------------------------------------------------
+\subsection{AI applications in procurement and document intelligence}
+\label{sec:lr:sota:procurement}
+
+Table~\ref{tab:lr:landscape} summarises the studies most directly relevant to the present work.
+
+\begin{table}[htbp]
+\centering
+\caption{Landscape of AI in procurement and related document-intelligence studies.}
+\label{tab:lr:landscape}
+\footnotesize
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{@{}p{2.6cm}p{2.3cm}p{3.1cm}p{2.7cm}p{1.1cm}p{2.1cm}@{}}
+\toprule
+\textbf{Study} & \textbf{Procurement tier} & \textbf{Task type} & \textbf{Method} & \textbf{Cross-doc} & \textbf{Production} \\
+\midrule
+\citet{toorajipour2021}   & Strategic / Tactical               & Systematic review (64 studies)                          & ANN, fuzzy, GA                       & ---     & ---                       \\
+\citet{bienhaus2018}      & Strategic                          & Survey (414 respondents)                                & ---                                  & ---     & ---                       \\
+\citet{allalcherif2021}   & Strategic / Tactical / Operational & Multiple case study                                     & ---                                  & ---     & Yes                       \\
+\citet{guida2023}         & Strategic / Tactical / Operational               & Systematic review + focus group                         & ML, NLP, optimisation                & ---     & ---                       \\
+\citet{frederico2023}     & Strategic                          & Viewpoint on GenAI in SCM                               & ---                                  & ---     & ---                       \\
+\citet{bahroun2026}       & Strategic / Tactical               & PRISMA review (98 studies)                              & GenAI                                & ---     & ---                       \\
+\citet{kanaparthi2023}    & Operational                        & Invoice processing (AP)                                 & Hybrid ML + rules                    & Partial & Yes ($\sim$70k invoices)  \\
+\citet{loukil2024}        & Operational                        & Field extraction from invoices                          & LLM (Llama 3, Mistral)               & No      & Prototype                 \\
+\citet{berghaus2025}      & Operational                        & Invoice parsing benchmark                               & Multi-modal LLMs                     & No      & ---                       \\
+\citet{ke2025}            & ---                                & Survey ($\sim$300 papers) on LLMs for document intelligence & LLM                              & ---     & ---                       \\
+\citet{hasan2025}         & Operational                        & Templatised document extraction benchmark               & LLM                                  & No      & ---                       \\
+This thesis               & Operational                        & ASN-to-PO validation                                    & Hybrid LLM + deterministic enforcer  & Yes     & Yes (Hilti)               \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+Systematic reviews converge on a shared picture. Across 64 studies on AI in supply chain management \citep{toorajipour2021}, 98 PRISMA screened studies on generative AI in supply chains \citep{bahroun2026}, and procurement specific analyses by \citet{guida2023}, AI applications concentrate on demand forecasting, supplier selection, spend analytics, and contract management. Artificial neural networks, fuzzy models, and genetic algorithms dominate the earlier corpora, while generative AI has more recently extended this footprint into supplier evaluation and sustainability oriented sourcing. Transactional document processing is absent in all 3 reviews, and the wider viewpoint literature on GenAI in supply chains \citep{frederico2023} does not depart from this pattern.
+
+An organisational explanation accompanies the empirical one. \citet{bienhaus2018}, surveying 414 procurement professionals, reported that lack of digital strategy, insufficient organisational capabilities, and uncertainty about value remain the dominant barriers to digital procurement, which helps explain why procure-to-pay processes continue to be manually intensive despite the availability of digital tools. \citet{allalcherif2021}, in a multiple case study of 5 AI powered procurement platforms, reinforced the point: the operational automation these platforms deliver focuses on workflow orchestration, compliance monitoring, and delay reduction rather than on the data quality of incoming transactional documents.
+
+The closest precursor in this layer is \citet{kanaparthi2023}, whose production accounts payable system has processed approximately 70,000 of an annual volume of 80,000 invoices at a 76\% automation rate through a modular pipeline of pre-LLM machine learning modules combined with rule based verification for PO numbers and tax arithmetic, routing items through a dual threshold confidence mechanism that prefigures the PASS/REVIEW/REJECT disposition adopted in this thesis. The system, however, addresses only the downstream end of the procure-to-pay cycle. More recent LLM centric work by \citet{loukil2024} demonstrates field extraction across 50 heterogeneous invoice layouts without per-layout configuration, and the broader survey by \citet{ke2025} organises LLM-for-document-intelligence research around 8 core challenges, none of which addresses cross-document reconciliation. Benchmarking efforts \citep{berghaus2025,hasan2025} have likewise remained within the single-document frame.
+
+The literature therefore reveals a consistent pattern. Academic research on AI in procurement gravitates toward strategic decision support, while operational document validation remains treated as a rule based IT integration problem rather than an AI opportunity. ASN-to-PO validation, by contrast, demands both semantic understanding and precise numerical verification, motivating the hybrid precursors examined in the next subsection.
+
+
+%% -----------------------------------------------------------------
+\subsection{Hybrid LLM + deterministic validation precursors}
+\label{sec:lr:sota:hybrid}
+
+Hybrid architectures that combine LLM semantic reasoning with deterministic post-processing have emerged across multiple domains, including procurement, medical reporting, address parsing, document analytics, formal specification, and clinical calculation. Table~\ref{tab:lr:precursors} maps the closest precursors across key architectural dimensions, and the paragraphs that follow examine each in turn.
+
+\begin{table}[htbp]
+\centering
+\caption{Closest precursors for hybrid LLM/ML + deterministic validation.}
+\label{tab:lr:precursors}
+\scriptsize
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{@{}p{2.0cm}p{1.7cm}p{1.5cm}p{2.3cm}p{1.5cm}p{1.2cm}p{2.6cm}p{1.6cm}@{}}
+\toprule
+\textbf{Precursor} & \textbf{Domain} & \textbf{Core model} & \textbf{Deterministic layer} & \textbf{Post hoc verif.} & \textbf{Rule count} & \textbf{Evaluation} & \textbf{Production} \\
+\midrule
+\citet{kanaparthi2023}            & Invoice processing                            & ML modules; fuzzy search (FuzzyWuzzy); IR-based        & PO number rules, tax/freight arithmetic                  & Partial (by module)        & PO + tax rules        & Automation rate (76\%)                                  & Yes (70k invoices)  \\
+\citet{loukil2024}                & Invoice extraction                            & Llama 3, Mistral       & Schema post-check                                        & No                         & ---             & Per-field F1                                            & Prototype           \\
+\citet{tarannum2026}              & Name / address parsing                        & Claude 4.0 Sonnet          & Schema + value normalisation + cross-field rules         & Yes                        & $\sim$17 fields & Field-level accuracy                                    & No                  \\
+\citet{prenosil2025}              & Medical reports                               & GPT-4                  & Rule-based expert system                                 & Yes                        & Domain rules    & Clinician review                                        & Pilot               \\
+\citet{xu2025}                    & General reasoning                             & LLM verbaliser         & Deterministic theorem generator                          & Yes (by construction)      & ---             & Proof correctness                                       & No                  \\
+\citet{shankar2025} (DocETL)    & Document analytics                            & Multiple LLMs          & Agent-guided rewriting                                   & No                         & ---             & Pipeline accuracy (+21--80\%)                           & Research artefact   \\
+\citet{bayless2025}               & NL $\to$ formal spec                          & LLM                    & Neurosymbolic verifier                                   & Yes                        & ---             & Formal soundness                                        & Research artefact   \\
+\citet{stechly2024}               & Reasoning \& planning                         & GPT-4                  & External sound verifier (Game of 24, Graph Colouring, STRIPS) & Yes                   & Domain rules    & Self-critique vs sound verifier vs re-prompting         & Research artefact   \\
+\citet{sadowski2026}              & Rule based reasoning (legal, scientific, clinical) & LLM extractor (11 models) & OWL 2 / SWRL symbolic reasoner                       & Yes                        & Domain rules    & Cross-domain F1 + ablation isolating verifier (+9.7 pp) & Research artefact   \\
+\citet{goodell2025}               & Clinical calculations                         & GPT and LLaMa-3.1 models         & Task-specific calculation tools                          & In generation tool calls   & ---             & 5-mode ablation; 10,000 trials                          & Pilot               \\
+This thesis                       & ASN-to-PO validation                          & LLM                    & Multi-rule enforcer; PASS/REVIEW/REJECT                  & Yes                        & Multi-rule      & Ablation + per rule override + expert judgment          & Yes                 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+The first group establishes the post hoc verification structure this pipeline shares. \citet{prenosil2025} connect GPT-4 to a rule based expert system that extracts auditable data from medical reports: an LLM extraction stage followed by rule based verification, the same structure as the LLM validation stage and deterministic enforcer proposed here. \citet{xu2025} pair an LLM with a deterministic theorem generator; the generator builds provably sound proofs and the LLM turns them into human readable explanations, giving what they call ``explainability by construction''. \citet{bayless2025} likewise pair an LLM with a verifier, here one that proves the formal soundness of a natural language to formal specification translation. Across these systems, the hybrid design beats a purely neural one wherever both flexibility and correctness are needed.
+
+A second group shows where that value comes from. \citet{stechly2024} evaluated GPT-4 on Game of 24, Graph Colouring and STRIPS planning, and found that letting the model critique itself made it worse, while a sound external verifier made it better. \citet{sadowski2026} reach the same conclusion in another setting: they couple LLMs with SWRL symbolic reasoners across legal, scientific and clinical domains, and a controlled ablation shows that removing the reasoner costs 9.7 percentage points of F1 on average, and up to 19.9 on clinical-trial eligibility. In both cases the gain comes from the deterministic verifier, not from better prompting.
+
+In generation tool use is demonstrated by \citet{goodell2025}: on 48 clinical calculation tasks across 10,000 trials, giving the model task specific tools cut incorrect answers 5.5- to 13-fold. They compare 5 configurations, the base model, a code interpreter, retrieval, retrieval with a code interpreter, and task specific tools, which is the methodological precedent for the multi-mode ablation used here.
+
+The closest task parallels come from parsing and procurement. \citet{tarannum2026} parse names and addresses into a 17-field schema using normalisation, structured prompting, constrained decoding and a layered deterministic check: schema validation, then canonicalisation, then cross-field rules. This layered check parallels the enforcer, with one difference: it validates fields inside a single document, whereas ASN-to-PO validation reconciles fields across 2 linked documents, which is the extension this thesis makes. \citet{kanaparthi2023} offer the strongest production precedent: an accounts payable system that combines ML modules with rule-based PO and tax checks, reaching 76\% automation on 80,000 invoices and routing cases through confidence zones that prefigure the PASS/REVIEW/REJECT disposition adopted here.
+
+Finally, \citet{shankar2025} show with DocETL that systematically optimising and decomposing an LLM pipeline yields accuracy gains of 21 to 80\% over engineered baselines: operations the model fails on as a whole succeed once they are broken into simpler sub-tasks. This directly supports the multi-stage decomposition used in this work.
+
+
+%% -----------------------------------------------------------------
+\subsection{Evaluation Benchmarks for Hybrid Validation Pipelines}
+\label{sec:lr:sota:benchmarks}
+
+The closest evaluation paradigm is table based fact verification. TabFact \citep{chen2020tabfact} established that verifying statements against structured tables needs both soft linguistic reasoning and hard symbolic reasoning, the same duality as document validation, where semantic interpretation and arithmetic verification must coexist; related benchmarks extend this to mixed evidence and financial tables \citep{aly2021,zhu2021,chen2021finqa}. None evaluate the multi-rule, cross-document scenario central to this thesis, where a whole shipping notice is verified against a whole purchase order across 22 concurrent rules. A catalogue of the most relevant benchmarks is in Appendix~\ref{app:rules} (Table~\ref{tab:lr:benchmarks}).
+
+
+%% -----------------------------------------------------------------
+\subsection{Synthesis: knowledge gaps, contributions envisaged, and research questions}
+\label{sec:lr:synthesis}
+
+The literature reviewed defines the space within which this thesis operates. Three knowledge gaps emerge, each motivating one research question.
+
+The setting is an underserved one. Sections~\ref{sec:lr:sota:procurement} and~\ref{sec:lr:sota:hybrid} showed that AI for procurement gravitates toward strategic decision support, while transactional validation is still treated as a rule-based IT problem. The closest LLM-era precedents \citep{loukil2024,berghaus2025,hasan2025} handle single document extraction, and the closest hybrid precedent \citep{kanaparthi2023} predates the LLM era and covers only the downstream end of procure-to-pay.
+
+The first gap is the absence of a head-to-head comparison of the major hybrid designs for multi-rule document validation. The literature offers 3 architectural responses: post hoc deterministic verification \citep{prenosil2025,tarannum2026,bayless2025}, LLM-as-judge audits \citep{zheng2023,liu2023geval,kim2024}, and in generation tool use \citep{schick2024,lyu2023,goodell2025}. Each has been evaluated on its own terms; none has been compared with the others on the same multi-rule workload, and the closest external comparisons remain partial \citep{goodell2025,sadowski2026,stechly2024}. \citet{bahroun2026} close their review by calling for exactly this: head-to-head benchmarks of generative AI architectures and auditable platforms for regulated settings.
+
+The second gap concerns instruction density. Section~\ref{sec:lr:density} documented that LLM accuracy falls as the number of concurrent instructions grows \citep{jaroslawicz2025,tam2024,gozzi2024}. The proposed pipeline embeds 22 rules in a single call; whether reducing that density, by settling the 8 deterministic rules upstream and scoping the model to the remaining 14, yields measurable accuracy or cost gains has not been tested in a structured validation setting.
+
+The third gap concerns supplier conditioning. Retrieval and entity-level grounding are widely held to raise LLM reliability (Section~\ref{sec:lr:rag}), yet Section~\ref{sec:lr:hallucination} showed that retrieval addresses factuality, not faithful computation from values already in context. Whether a supplier history prior improves disposition accuracy, or is subsumed by the deterministic enforcer, has not been tested.
+
+The thesis makes 3 contributions in response. Methodologically, it formalises the enforcer pattern as a reusable component for LLM based document validation: a deterministic layer that overrides LLM outputs at field level where computation disagrees, while preserving the model's semantic reasoning elsewhere. Empirically, it delivers a 5-mode ablation, the pure LLM, an LLM-as-judge audit, the deterministic enforcer applied post hoc and pre hoc, and in generation tool use, comparing the major designs on accuracy, rule coverage, cost and latency. The post hoc versus pre hoc placement is the contrast that tests the effect of enforcer position on prompt instruction density.
+
+Within this context, the thesis investigates 3 research questions.
+
+\textbf{RQ.1.} How do alternative pipeline designs for LLM-based document validation, namely the pure LLM, the LLM-as-judge audit, the deterministic enforcer applied post hoc and pre hoc, and in generation tool use, compare on per rule accuracy, document level disposition, cost, and latency?
+
+\textbf{RQ.2.} Does the position of the deterministic enforcer, applied before LLM validation, during it as tool calls, or after it, affect validation accuracy, cost, and latency?
+
+\textbf{RQ.3.} Does conditioning the validation prompt on a supplier's historical failure record improve disposition accuracy, relative to switching that history off or replacing it with a placebo history?
